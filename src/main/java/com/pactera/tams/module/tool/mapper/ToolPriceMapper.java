@@ -1,16 +1,24 @@
 package com.pactera.tams.module.tool.mapper;
 
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
 import com.pactera.tams.module.tool.model.ToolPrice;
-
+import com.pactera.tams.module.tool.vo.ToolPriceQuery;
 import tk.mybatis.mapper.common.Mapper;
+
+import java.util.List;
 /**
  * 刀具
  * @author js
  *2018.2.8
  */
 public interface ToolPriceMapper extends Mapper<ToolPrice>{
-	public List getList(ToolPrice bean);
-	public int getTotal(ToolPrice bean);
+	List getList(ToolPrice bean);
+	int getTotal(ToolPrice bean);
+
+	/**
+	 * 查询刀具价格趋势
+	 * @param query
+	 * @return
+	 */
+	List<JSON> findPriceHistory(ToolPriceQuery query);
 }
