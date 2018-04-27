@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.tool.mapper.ToolComposeMapper">
+	<select id="getSmallToolId" parameterType="com.pactera.tams.module.tool.model.ToolCompose" resultType="com.pactera.tams.module.tool.model.ToolCompose">
+		select small_tool_id from tams_tool_compose 
+		where tool_id= '${tool_id}'
+	</select>
+	<select id="getToolList" parameterType="com.pactera.tams.module.tool.model.ToolCompose" resultType="map">
+		select 
+			c.id,
+			c.small_tool_id,
+			t.tool_name,
+			t.trade_mark,
+			t.specification,
+			(
+			select p.tool_price from tams_tool_price p where p.tool_id=c.small_tool_id order by p.create_date desc limit 1
+			  )as tool_price
+			from tams_tool_compose c
+			left join tams_tool t on t.id=c.small_tool_id
+			where 1=1
+			<if test="tool_id != null and tool_id != ''">
+				and c.tool_id = '${tool_id}'
+			</if>
+	</select>
+	<select id="getToolOne" parameterType="com.pactera.tams.module.tool.model.ToolCompose" resultType="map">
+		select 
+			t.id,
+			t.tool_name,
+			t.trade_mark,
+			t.specification,
+			(
+			select p.tool_price from tams_tool_price p where p.tool_id=t.id order by p.create_date desc limit 1
+			  )as tool_price
+			from tams_tool t
+			where 1=1
+			<if test="tool_id != null and tool_id != ''">
+				and t.id = '${tool_id}'
+			</if>
+	</select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.video.mapper.VideoMapper">
+	<select id="getVideoList" parameterType="com.pactera.tams.module.video.model.Video" resultType="map">
+		select 
+			n.id,
+			n.video_name,
+			n.upload_name,
+			n.video_pic,
+			n.cover_pic,
+			n.content,
+			n.catalog_id,
+			n.status,
+			n.sort,
+			n.create_date,
+			n.create_by,
+			(
+				select u.name from sys_user u where u.id=n.create_by
+			) as create_name,
+			(
+				select c.catalog_name from tams_video_catalog c where c.id=n.catalog_id
+			) as catalog_name
+		from tams_video n
+		where 1=1
+		<if test="catalog_id != null and catalog_id != ''">
+			and n.catalog_id in (${catalog_id})
+		</if>
+		<if test="status != null and status !=''">
+		  and n.status= '${status}'
+		</if>
+		<if test="video_name != null and video_name !=''">
+		  and n.video_name like '%${video_name}%'
+		</if>
+		order by n.create_date desc
+	</select>
+</mapper>

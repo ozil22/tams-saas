@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.product.mapper.ProductTechnicsSchemeMapper">
+	<select id="getProcessList" parameterType="com.pactera.tams.module.product.model.ProductTechnicsSchemeProcess" resultType="map">
+		select
+		  p.id,
+		  p.device_specs,
+		  p.machine_situation,
+		  p.device_name,
+		  p.pic_no,
+		  p.material_specs,
+		  p.day_time,
+		  p.month_time,
+		  p.year_time,
+		  p.equipment_rate,
+		  p.rhythm,
+		  p.output,
+		  p.remark,
+		  p.sort,
+		  p.day_time,
+		  p.month_time,
+		  p.year_time,
+		  p.equipment_rate,
+		  p.rhythm,
+		  p.output,
+		  s.id as step_id,
+		  s.tool_name,
+		  s.step_require,
+		  s.step_no,
+		  s.content
+		from tams_product_technics_scheme_process p 
+		left join tams_product_technics_scheme_work_step s on s.scheme_id = p.id and s.type=0 
+		where 1=1 
+		<if test="technics_id != null and technics_id != ''">
+			and p.technics_id = '${technics_id}'
+		</if>
+	</select>
+	<select id="getSchemeMessage" parameterType="com.pactera.tams.module.product.model.ProductTechnicsScheme" resultType="map">
+		select 
+			s.id,
+			s.technics_name,
+			s.code,
+			s.type,
+			s.is_excellent,
+			s.technics_pic,
+			s.is_recommend,
+			s.product_id,
+			(select count(0) from tams_product_technics_scheme_work_step w where w.scheme_id = p.id and w.type = 0) as processCount
+		from tams_product_technics_scheme s 
+		left join tams_product_technics_scheme_process p on p.technics_id = s.id
+		where 1=1
+		<if test="product_id != null and product_id != ''">
+			and s.product_id = '${product_id}'
+		</if>
+		order by s.is_excellent desc
+	</select>
+	<select id="getSchemeToolList" parameterType="com.pactera.tams.module.product.model.ProductTechnicsSchemeProcess" resultType="map">
+		select 
+			d.id,
+			(select w.step_no from tams_product_technics_scheme_work_step w where w.scheme_id = p.id and w.type = 0) as step_no,
+			d.tool_no,
+			d.tool_name,
+			d.specification,
+			d.amount,
+			d.tool_code,
+			d.recommend_brand,
+			d.price,
+			(select count(0) from tams_detail_list d where d.scheme_no=s.id) as child
+			from tams_product_technics_scheme_process p 
+			left join tams_product_technics_scheme_work_step s on s.scheme_id = p.id
+			right join tams_detail_list d on d.scheme_no=s.id
+			where 1=1
+			<if test="technics_id != null and technics_id != ''">
+			and p.technics_id = '${technics_id}'
+			</if>
+	</select>
+	<select id="getRhythmList" parameterType="com.pactera.tams.module.product.model.ProductTechnicsSchemeProcess" resultType="map">
+		select 
+			c.id,
+			c.parts_name,
+			(select w.step_no from tams_product_technics_scheme_work_step w where w.scheme_id = p.id and w.type = 0) as step_no,
+			c.device_date,
+			c.feed_date,
+			c.rhythm,
+			c.annual_output,
+			c.production_program,
+			c.machine_amount,
+			c.device_mode,
+			c.sort,
+			c.tenant_id
+			from tams_product_technics_scheme_process p 
+			right join tams_rhythm_collect c on c.scheme_no = p.id
+			where 1=1
+			<if test="technics_id != null and technics_id != ''">
+			and p.technics_id = '${technics_id}'
+			</if>
+	</select>
+	<select id="getAllList" parameterType="com.pactera.tams.module.product.model.ProductTechnicsScheme" resultType="map">
+		select 
+			s.id,
+			s.technics_name,
+			s.code,
+			s.type,
+			s.is_excellent,
+			s.technics_pic,
+			s.is_recommend,
+			s.product_id,
+			s.sort,
+			s.tenant_id,
+			(select p.product_name from tams_product p where p.id=s.product_id) as product_name,
+			p.specification
+		from tams_product_technics_scheme s 
+		left join tams_product p on p.id=s.product_id 
+		<if test="product_name != null and product_name != ''">
+			and p.product_name like '%${product_name}%'
+		</if>
+		<if test="specification != null and specification != ''">
+			and p.specification like '%${specification}%'
+		</if>
+		where 1=1
+		<if test="code != null and code != ''">
+			and s.code = '${code}'
+		</if>
+		
+		order by s.is_excellent desc
+	</select>
+	<select id="getAllListCount" parameterType="com.pactera.tams.module.product.model.ProductTechnicsScheme" resultType="Integer">
+		select 
+			count(0)
+		from tams_product_technics_scheme s 
+		left join tams_product p on p.id=s.product_id 
+		<if test="product_name != null and product_name != ''">
+			and p.product_name like '%${product_name}%'
+		</if>
+		<if test="specification != null and specification != ''">
+			and p.specification like '%${specification}%'
+		</if>
+		where 1=1
+		<if test="code != null and code != ''">
+			and s.code = '${code}'
+		</if>
+	</select>
+
+	<select id="findAllSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'technics' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content,
+			s.id technics_id,
+			s.technics_name technics_name,
+			s.code technics_code
+		FROM tams_product_technics_scheme s
+		LEFT JOIN tams_product p ON p.ID = s.PRODUCT_ID
+	</select>
+	<select id="getSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'technics' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content,
+			s.id technics_id,
+			s.technics_name technics_name,
+			s.code technics_code
+		FROM tams_product_technics_scheme s
+		LEFT JOIN tams_product p ON p.ID = s.PRODUCT_ID
+		WHERE s.id=#{id}
+	</select>
+</mapper>

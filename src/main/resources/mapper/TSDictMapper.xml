@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.machine.mapper.TSDictMapper" >
+  <resultMap id="BaseResultMap" type="com.pactera.tams.module.machine.entity.TSDict" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="P_CODE" property="pCode" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="FULL_NAME" property="fullName" jdbcType="VARCHAR" />
+    <result column="SHORT_NAME" property="shortName" jdbcType="VARCHAR" />
+    <result column="ENGLISH_NAME" property="englishName" jdbcType="VARCHAR" />
+    <result column="IS_SHOW" property="isShow" jdbcType="INTEGER" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="getDicList" parameterType="com.pactera.tams.module.machine.entity.TSDict" resultType="com.pactera.tams.module.machine.entity.TSDict">
+		select
+		c.ID,P_CODE pCode,c.CODE,c.FULL_NAME fullName,c.SHORT_NAME shortName,c.ENGLISH_NAME englishName,c.IS_SHOW isShow,c.SORT 
+		from sys_dict c
+		<where>
+			IS_SHOW=1
+			<if test="code != null and code != ''">
+				and c.CODE='${code}'
+			</if> 
+			<if test="pCode != null and pCode != ''">
+				and c.P_CODE='${pCode}'
+			</if> 
+			<!-- <if test="tenantId != null and tenantId != ''">
+				and c.tenant_id='${tenantId}'
+			</if> -->
+		</where>
+		<!-- order by c.create_date desc -->
+	</select>
+</mapper>

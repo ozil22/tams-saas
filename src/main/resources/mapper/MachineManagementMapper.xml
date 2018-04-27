@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pactera.tams.module.machine.mapper.MachineManagementMapper">
+  <!-- <resultMap id="BaseResultMap" type="com.pactera.tams.machine.model.TamsMachineTool">
+    
+      WARNING - @mbg.generated
+   
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="DEVICE_CODE" jdbcType="VARCHAR" property="deviceCode" />
+    <result column="MACHINE_NAME" jdbcType="VARCHAR" property="machineName" />
+    <result column="PIC_PATH" jdbcType="VARCHAR" property="picPath" />
+    <result column="BRAND" jdbcType="VARCHAR" property="brand" />
+    <result column="MODE" jdbcType="VARCHAR" property="mode" />
+    <result column="ORIGIN_AREA" jdbcType="VARCHAR" property="originArea" />
+    <result column="SUPPLIER_NAME" jdbcType="VARCHAR" property="supplierName" />
+    <result column="MACHING_PRECISION" jdbcType="VARCHAR" property="machingPrecision" />
+    <result column="MACHINE_LABLE" jdbcType="VARCHAR" property="machineLable" />
+    <result column="MACHINE_TYPE" jdbcType="TINYINT" property="machineType" />
+
+    <result column="MACHING_RANGE" jdbcType="VARCHAR" property="machingRange" />
+    <result column="SORT" jdbcType="INTEGER" property="sort" />
+    <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId" />
+    <result column="UPDATE_DATE" jdbcType="VARCHAR" property="updateDate" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="CREATE_DATE" jdbcType="VARCHAR" property="createDate" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+  </resultMap> -->
+	
+	<select id="getList" parameterType="com.pactera.tams.module.machine.entity.MachineManagementEntity" resultType="com.pactera.tams.module.machine.entity.MachineManagementEntity">
+		select
+		c.ID ,c.DEVICE_CODE deviceCode,c.MACHINE_NAME machineName,c.PIC_PATH picPath,c.BRAND,c.MODE,c.ORIGIN_AREA originArea,
+		c.SUPPLIER_NAME supplierName,c.MACHING_PRECISION machingPrecision,c.MACHINE_LABLE machineLable,c.MACHINE_TYPE machineType,
+		c.MACHING_RANGE machingRange,c.SORT,c.TENANT_ID tenantId,c.UPDATE_DATE updateDate,c.UPDATE_BY updateBy,c.CREATE_DATE createDate,c.CREATE_BY createBy
+		
+		from tams_machine_tool c
+		<where>
+			<!-- <if test="parent_id != null and parent_id != ''">
+				and c.parent_id='${parentId}'
+			</if> -->
+			 <if test="brand != null and brand != ''">
+				and c.brand='${brand}'
+			</if> 
+			<if test="tenantId != null and tenantId != ''">
+				and c.tenant_id='${tenantId}'
+			</if>
+		</where>
+		order by c.create_date desc
+	</select>
+</mapper>

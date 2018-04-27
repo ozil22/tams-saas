@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.product.mapper.ProductTechnicsSchemeWorkStepMapper">
+	<select id="findAllSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'step' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content,
+			s.id technics_id,
+			s.technics_name technics_name,
+			s.code technics_code,
+			a.id scheme_id,
+			a.remark scheme_remark,
+			w.id step_id,
+			w.step_no step_no,
+			w.content step_content,
+			w.step_require step_require
+		FROM tams_product_technics_scheme_work_step w
+		LEFT JOIN tams_product_technics_scheme_process a ON a.ID = w.SCHEME_ID
+		LEFT JOIN tams_product_technics_scheme s ON s.ID = a.TECHNICS_ID
+		LEFT JOIN tams_product p ON p.ID = s.PRODUCT_ID
+	</select>
+	<select id="getSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'step' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content,
+			s.id technics_id,
+			s.technics_name technics_name,
+			s.code technics_code,
+			a.id scheme_id,
+			a.remark scheme_remark,
+			w.id step_id,
+			w.step_no step_no,
+			w.content step_content,
+			w.step_require step_require
+		FROM tams_product_technics_scheme_work_step w
+		LEFT JOIN tams_product_technics_scheme_process a ON a.ID = w.SCHEME_ID
+		LEFT JOIN tams_product_technics_scheme s ON s.ID = a.TECHNICS_ID
+		LEFT JOIN tams_product p ON p.ID = s.PRODUCT_ID
+		WHERE  w.id=#{id}
+	</select>
+</mapper>

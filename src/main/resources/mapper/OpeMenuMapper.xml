@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.system.mapper.OpeMenuMapper" >
+
+
+  <resultMap id="BaseResultMap" type="com.pactera.tams.module.system.entity.OpeMenu" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+    <result column="parent_ids" property="parentIds" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="href" property="href" jdbcType="VARCHAR" />
+    <result column="target" property="target" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="is_show" property="isShow" jdbcType="TINYINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="permission" property="permission" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="menuColumns">
+  	a.id,
+  	a.parent_id AS parent_id,
+  	a.parent_ids AS parent_ids,
+  	a.name,
+  	a.type,
+  	a.href,
+  	a.target,
+  	a.icon,
+  	a.is_show AS isShow,
+  	a.code,
+	a.permission,
+	a.sort,
+	a.create_by AS createBy,
+	a.create_date AS createDate,
+	a.update_by AS updateBy,
+	a.update_date AS updateDate,
+	a.delete_flag AS deleteFlag,
+	a.remark
+  </sql>
+  
+  <!-- 获取角色拥有的菜单 -->	
+  <select id="getListByRole" resultMap="BaseResultMap">
+  
+	SELECT
+		<include refid="menuColumns"/>
+	FROM
+		ope_menu a
+	LEFT JOIN sys_role_menu rm ON a.id = rm.menu_id
+	WHERE
+		1 = 1
+	AND a.delete_flag = 0
+	AND rm.role_id = #{id}
+
+  </select>
+
+  <!-- 获取用户拥有的菜单 -->
+  <select id="getListByUser" resultMap="BaseResultMap">
+	SELECT DISTINCT
+		<include refid="menuColumns"/>
+	FROM
+		ope_menu a
+	JOIN sys_role_menu rm ON rm.menu_id = a.id
+	JOIN sys_user_role ur ON ur.role_id = rm.role_id
+	JOIN sys_user b ON b.id = ur.user_id
+	AND b.delete_flag = 0
+	AND b.enabled = 1
+	WHERE
+		a.delete_flag = 0
+	AND a.is_show = 1
+	<if test="parentId != null and parentId !=''">
+		AND a.parent_id = #{parentId}
+	</if>	
+	<if test="type != null and type !=''">
+		AND a.type = #{type}
+	</if>	
+	AND b.id = #{userId}
+	ORDER BY
+		a.sort
+  </select> 
+
+  
+  
+</mapper>

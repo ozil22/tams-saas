@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.system.mapper.SysRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.pactera.tams.module.system.entity.SysRole" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="dept_id" property="deptId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="role_type" property="roleType" jdbcType="TINYINT" />
+    <result column="data_scope" property="dataScope" jdbcType="TINYINT" />
+    <result column="sys_role" property="sysRole" jdbcType="TINYINT" />
+  </resultMap>
+
+  <sql id="roleColumns">
+  	a.id,
+  	a.name,
+  	a.code,
+  	a.role_type AS roleType,
+	a.data_scope AS dataScope,
+	a.sys_role AS sysRole,
+	a.sort,
+	a.create_by AS createBy,
+	a.create_date AS createDate,
+	a.update_by AS updateBy,
+	a.update_date AS updateDate,
+	a.delete_flag AS deleteFlag,
+	a.remark
+  </sql>
+	    
+  <select id="getListByUser" resultMap="BaseResultMap">
+  
+	SELECT
+		<include refid="roleColumns"/>
+	FROM
+		sys_role a
+	LEFT JOIN sys_user_role ur ON a.id = ur.role_id
+	WHERE
+		1 = 1
+	AND a.delete_flag = 0
+	AND ur.user_id = #{id}
+
+  </select>
+  
+  
+  
+</mapper>

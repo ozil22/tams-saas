@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.tool.mapper.ToolMapper">
+	<select id="getList" parameterType="com.pactera.tams.module.tool.model.Tool" resultType="map">
+		select 
+			p.id,
+			p.tool_name,
+			p.spec_name,
+			p.specification,
+			p.product_pic,
+			p.patrs_pic,
+			p.video_id,
+			p.three_dimensional,
+			p.tool_label,
+			p.content,
+			p.catalog_id,
+			p.product_id,
+			p.brand_id,
+			p.type,
+			p.status,
+			p.is_recommend,
+			p.sort,
+			p.update_date,
+			p.update_by,
+			p.tool_way,
+			p.trade_mark,
+			(
+				select u.name from sys_user u where u.id=p.update_by
+			) as update_name,
+			(
+				select a.TOOL_PRICE from tams_tool_price a where a.tool_id = p.id order by create_date desc LIMIT 1 
+			) as tool_price,
+			p.create_date,
+			p.create_by,
+			(
+				select u.name from sys_user u where u.id=p.create_by
+			) as create_name,
+			(
+				select c.catalog_name from tams_tool_catalog c where c.id=p.catalog_id
+			) as catalog_name
+		from tams_tool p
+		where 1=1
+		<if test="catalog_id != null and catalog_id != ''">
+			and p.catalog_id in (${catalog_id})
+		</if>
+		<if test="status != null and status != ''">
+			and p.status = '${status}'
+		</if>
+		<if test="type != null and type != ''">
+			and p.type = '${type}'
+		</if>
+		<if test="trade_mark != null and trade_mark != ''">
+			and p.trade_mark = '${trade_mark}'
+		</if>
+		<if test="specification != null and specification != ''">
+			and p.specification like '%${specification}%'
+		</if>
+		<if test="brand_id != null and brand_id != ''">
+			and p.brand_id like '%${brand_id}%'
+		</if>
+		order by p.create_date desc
+	</select>
+
+	<select id="findAllSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'tool' index_name,
+			p.id tool_id,
+			p.tool_name tool_name,
+			p.specification tool_specification,
+			p.tool_label tool_label,
+			p.content tool_content
+		from tams_tool p
+	</select>
+
+	<select id="getSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'tool' index_name,
+			p.id tool_id,
+			p.tool_name tool_name,
+			p.specification tool_specification,
+			p.tool_label tool_label,
+			p.content tool_content
+		from tams_tool p
+		where id=#{id}
+	</select>
+</mapper>

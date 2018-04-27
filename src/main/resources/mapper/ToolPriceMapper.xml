@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.tool.mapper.ToolPriceMapper">
+	<select id="getList" parameterType="com.pactera.tams.module.tool.model.ToolPrice" resultType="map">
+		select 
+			r.id,
+			r.tool_price, 
+			r.price_date,
+			r.sort,
+			r.tenant_id,
+			r.create_date,
+			r.create_by,
+			r.update_date,
+			r.update_by,
+			(
+				select u.trade_mark from tams_tool u where u.id=r.tool_id
+			) as trade_mark
+		from tams_tool_price r
+		left join tams_tool u on u.id = r.tool_id
+		where 1=1
+		<if test="tenant_id != null and tenant_id != ''">
+			and r.tenant_id ='${tenant_id}'
+		</if>
+		<if test="tool_id != null and tool_id != ''">
+			and r.tool_id ='${tool_id}'
+		</if>
+		
+		order by r.create_date desc
+		
+	</select>
+	
+	<select id="getTotal" parameterType="com.pactera.tams.module.tool.mapper.ToolPriceMapper" resultType="Integer">
+		select 
+			count(0)
+		from tams_tool_price s
+		where 1=1
+		<if test="tenant_id != null and tenant_id != ''">
+			and s.tenant_id ='${tenant_id}'
+		</if>
+		order by s.create_date desc
+	</select>
+	
+</mapper>

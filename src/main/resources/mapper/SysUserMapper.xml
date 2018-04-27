@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pactera.tams.module.system.mapper.SysUserMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.tams.module.system.entity.SysUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="TINYINT" property="sex" />
+    <result column="org_id" jdbcType="VARCHAR" property="orgId" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="post_id" jdbcType="VARCHAR" property="postId" />
+    <result column="post_name" jdbcType="VARCHAR" property="postName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="fax" jdbcType="VARCHAR" property="fax" />
+    <result column="user_type" jdbcType="TINYINT" property="userType" />
+    <result column="avatar_path" jdbcType="VARCHAR" property="avatarPath" />
+    <result column="login_ip" jdbcType="VARCHAR" property="loginIp" />
+    <result column="login_date" jdbcType="TIMESTAMP" property="loginDate" />
+    <result column="login_times" jdbcType="INTEGER" property="loginTimes" />
+    <result column="login_flag" jdbcType="TINYINT" property="loginFlag" />
+    <result column="enabled" jdbcType="TINYINT" property="enabled" />
+  </resultMap>
+ 
+  <sql id="userColumns">
+	a.id,
+	a.login_name AS loginName,
+	a.password,
+	a.salt,
+	a.no,
+	a.name,
+	a.sex,
+	a.company_id AS companyId,
+	a.dept_id AS deptId,
+	a.post_id AS postId,
+	a.email,
+	a.telephone,
+	a.mobile,
+	a.fax,
+	a.user_type AS userType,
+	a.avatar_path AS avatarPath,
+	a.login_ip AS loginIp,
+	a.login_date AS loginDate,
+	a.login_times AS loginTimes,
+	a.login_flag AS loginFlag,
+	a.enabled,
+	a.sort,
+	a.create_by AS createBy,
+	a.create_date AS createDate,
+	a.update_by AS updateBy,
+	a.update_date AS updateDate,
+	a.delete_flag AS deleteFlag,
+	a.remark,
+	a.tenant_id AS tenantId
+  </sql>
+
+  <!-- 获取用户列表:主要实现查询某个组织及其子级组织下的所有用户  -->
+  <select id="getList" resultMap="BaseResultMap">
+	SELECT
+		<include refid="userColumns"/>,
+		b. orgIds,
+		b. orgNames,
+		c. NAME AS postName		
+	FROM
+		sys_user a
+	JOIN (
+		SELECT
+			user_id,
+			GROUP_CONCAT(orgId) AS orgIds,
+			GROUP_CONCAT(orgName) AS orgNames
+		FROM
+			(
+				SELECT
+					uo.user_id,
+					uo.org_id AS orgId,
+					o. NAME AS orgName
+				FROM
+					sys_user_org uo
+				LEFT JOIN sys_org o ON o.id = uo.org_id
+				AND o.delete_flag = 0
+				AND o.tenant_id = #{tenantId}
+			) uo
+		WHERE
+			1 = 1
+		<if test="orgId != null and orgId !='' and orgParentIds != null and orgParentIds !=''">
+		AND EXISTS (
+			SELECT
+				1
+			FROM
+				sys_org o
+			WHERE
+				o.delete_flag = 0
+			AND (
+				o.id = #{orgId}
+				OR o.parent_ids LIKE concat(#{orgParentIds}, #{orgId}, ',%')
+			)
+			AND o.id = uo.orgId
+		)
+		</if>
+		GROUP BY
+			user_id
+	) b ON b.user_id = a.id
+	AND a.tenant_id = #{tenantId}
+	AND a.delete_flag = 0
+	LEFT JOIN sys_post c ON c.id = a.post_id
+	AND c.tenant_id = #{tenantId}
+	AND c.delete_flag = 0
+	WHERE
+		1 = 1
+	<if test="loginName != null and loginName !=''">
+		AND a.login_name = LIKE "%"#{loginName}"%"
+	</if>
+	<if test="name != null and name !=''">
+		AND a.name = LIKE "%"#{name}"%"
+	</if>			
+	<if test="no != null and no !=''">
+		AND a.no = LIKE "%"#{no}"%"
+	</if>	
+	<if test="mobile != null and mobile !=''">
+		AND a.mobile LIKE "%"#{mobile}"%"
+	</if>
+	<if test="enabled != null and enabled !=''">
+		AND a.enabled = #{enabled}
+	</if>
+  </select> 
+
+  <!-- 根据登录名（登录名、工号或者手机号）查询用户  -->
+  <select id="getUserListByLoginInfo" resultMap="BaseResultMap">
+	SELECT
+		<include refid="userColumns"/>
+	FROM
+		sys_user a
+	WHERE
+		a.delete_flag = 0
+		AND a.enabled = 1
+		<if test="tenantId != null and tenantId !=''">
+			AND a.tenant_id = #{tenantId}
+		</if>		
+		AND (
+			a.login_name = #{loginName}
+			OR a.no = #{loginName}
+			OR a.mobile = #{loginName}
+		)	
+  </select>
+ 
+</mapper>

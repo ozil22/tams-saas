@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pactera.tams.module.product.mapper.ProductMapper">
+	<select id="getList" parameterType="com.pactera.tams.module.product.model.Product" resultType="map">
+		select 
+			p.id,
+			p.product_name,
+			p.specification,
+			p.material_quality,
+			p.material_quality_spec,
+			p.trade_mark,
+			p.product_pic,
+			p.patrs_pic,
+			p.video_id,
+			p.three_dimensional,
+			p.product_label,
+			p.content,
+			p.catalog_id,
+			p.status,
+			p.is_recommend,
+			p.sort,
+			p.update_date,
+			p.update_by,
+			p.create_date,
+			p.create_by,
+			(
+				select c.catalog_name from tams_product_catalog c where c.id=p.catalog_id
+			) as catalog_name
+		from tams_product p
+		where 1=1
+		<if test="catalog_id != null and catalog_id != ''">
+			and p.catalog_id in (${catalog_id})
+		</if>
+		<if test="status != null and status != ''">
+			and p.status = '${status}'
+		</if>
+		<if test="product_name != null and product_name != ''">
+			and p.product_name like '%${product_name}%'
+		</if>
+		<if test="specification != null and specification != ''">
+			and  p.specification like '%${specification}%'
+		</if>
+		<if test="material_quality != null and material_quality != ''">
+			and p.material_quality like '%${material_quality}%'
+		</if>
+		<if test="tenant_id != null and tenant_id != ''">
+			and p.tenant_id  = '${tenant_id}'
+		</if>
+		order by p.create_date desc
+	</select>
+	
+		<select id="getTotal" parameterType="com.pactera.tams.module.product.model.Product" resultType="Integer">
+		select 
+			count(0)
+		from tams_product p
+		where 1=1
+		<if test="catalog_id != null and catalog_id != ''">
+			and p.catalog_id in (${catalog_id})
+		</if>
+		<if test="status != null and status != ''">
+			and p.status = '${status}'
+		</if>
+		<if test="product_name != null and product_name != ''">
+			and p.product_name like '%${product_name}%'
+		</if>
+		<if test="specification != null and specification != ''">
+			and  p.specification like '%${specification}%'
+		</if>
+		<if test="material_quality != null and material_quality != ''">
+			and p.material_quality like '%${material_quality}%'
+		</if>
+		<if test="tenant_id != null and tenant_id != ''">
+			and p.tenant_id  = '${tenant_id}'
+		</if>
+		order by p.create_date desc
+	</select>
+
+
+	<select id="findAllSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'product' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content
+		from tams_product p
+	</select>
+
+	<select id="getSolr" resultType="com.pactera.tams.module.solr.model.SolrModel">
+		select
+			'product' index_name,
+			p.id product_id,
+			p.product_name product_name,
+			p.specification product_specification,
+			p.material_quality product_material_quality,
+			p.trade_mark product_trade_mark,
+			p.product_label product_label,
+			p.content product_content
+		from tams_product p
+		where p.id=#{id}
+	</select>
+</mapper>
