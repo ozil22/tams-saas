@@ -14,4 +14,7 @@ public interface ToolMapper extends Mapper<Tool>{
 	List getList(Tool bean);
 	List<SolrModel> findAllSolr();
 	SolrModel getSolr(String id);
+	List<Tool> findHot();
+
+    void addClick(String id);
 }

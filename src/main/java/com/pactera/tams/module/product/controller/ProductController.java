@@ -1,11 +1,14 @@
 package com.pactera.tams.module.product.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.pactera.tams.common.utils.DateUtils;
+import com.pactera.tams.common.utils.IdGenerator;
+import com.pactera.tams.common.utils.MapToObjectFactory;
+import com.pactera.tams.common.utils.StringFormatUtils;
+import com.pactera.tams.module.product.model.Product;
+import com.pactera.tams.module.product.model.ProductCatalog;
+import com.pactera.tams.module.product.sevice.ProductCatalogService;
+import com.pactera.tams.module.product.sevice.ProductService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pactera.tams.common.utils.DateUtils;
-import com.pactera.tams.common.utils.IdGenerator;
-import com.pactera.tams.common.utils.MapToObjectFactory;
-import com.pactera.tams.common.utils.StringFormatUtils;
-import com.pactera.tams.module.product.model.Product;
-import com.pactera.tams.module.product.model.ProductCatalog;
-import com.pactera.tams.module.product.sevice.ProductCatalogService;
-import com.pactera.tams.module.product.sevice.ProductService;
-
-import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品
@@ -240,6 +237,27 @@ public class ProductController {
 			result.put("msg", "查询成功");
 			result.put("list", list);
 			result.put("total", total);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", "系统异常，请联系管理员");
+			result.put("retCode", "0");
+			return result;
+		}
+		return result;
+	}
+
+	/**
+	 * 查询单条数据
+	 */
+	@ApiOperation(value = "/getListOne",notes="产品单条查询接口")
+	@RequestMapping("/getListOne")
+	public ModelMap getListOne(@RequestParam String id) {
+		ModelMap result = StringFormatUtils.getResultMessage();
+		try {
+			Product product = objectService.getObjectById(id);
+			objectService.addClick(id);
+			result.put("msg", "查询成功");
+			result.put("product", product);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", "系统异常，请联系管理员");

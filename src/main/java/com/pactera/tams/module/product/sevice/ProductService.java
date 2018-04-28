@@ -118,4 +118,8 @@ public class ProductService {
 		}
 		return productMapper.selectByExample(example);
 	}
+
+	public void addClick(String id) {
+		productMapper.addClick(id);
+	}
 }

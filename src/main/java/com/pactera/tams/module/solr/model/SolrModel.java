@@ -313,4 +313,6 @@ public class SolrModel extends BaseEntity {
     public void setStep_tool_desc(String step_tool_desc) {
         this.step_tool_desc = step_tool_desc;
     }
+
+
 }

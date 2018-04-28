@@ -84,4 +84,12 @@
 		from tams_tool p
 		where id=#{id}
 	</select>
+	<select id="findHot" resultType="com.pactera.tams.module.tool.model.Tool">
+		select * from tams_tool order by click_num desc limit 4
+	</select>
+	<update id="addClick">
+		update tams_tool
+		set click_num = click_num + 1
+		where id = #{id}
+	</update>
 </mapper>

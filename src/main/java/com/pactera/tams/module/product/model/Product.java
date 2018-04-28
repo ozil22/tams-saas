@@ -1,8 +1,8 @@
 package com.pactera.tams.module.product.model;
 
-import javax.persistence.Table;
-
 import com.pactera.tams.common.model.BaseEntity;
+
+import javax.persistence.Table;
 
 /**
  * 产品
@@ -43,6 +43,7 @@ public class Product extends BaseEntity {
 	private String is_recommend = null;
 	
 	private String tenant_id = null;
+	private Integer click_num = null;
 
 	public String getProduct_name() {
 		return product_name;
@@ -172,4 +173,11 @@ public class Product extends BaseEntity {
 		this.specification_name = specification_name;
 	}
 
+	public Integer getClick_num() {
+		return click_num;
+	}
+
+	public void setClick_num(Integer click_num) {
+		this.click_num = click_num;
+	}
 }

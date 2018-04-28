@@ -43,16 +43,16 @@ public class SolrController {
         StringBuilder solrql = new StringBuilder("");
         solrql.append("tool_name:*").append(queryString).append("* OR ");
         solrql.append("product_name:*").append(queryString).append("*");
-        return solrModelService.search(solrql.toString(), pageNum, pageSize);
+        return (List<Map<String, String>>) solrModelService.search(solrql.toString(), pageNum, pageSize).get("list");
     }
 
     /**
      * 按条件查询搜索引擎
      */
-    @ApiOperation(value = "/search", notes = "快速查询接口，用于搜索栏")
+    @ApiOperation(value = "/search", notes = "搜索")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
-    public List<Map<String, String>> search(@RequestParam("queryString") String queryString, @RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
+    public Map<String, Object> search(@RequestParam("queryString") String queryString, @RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize) {
         StringBuilder solrql = new StringBuilder("");
         Class c = SolrModel.class;
         Field[] fields = c.getDeclaredFields();
@@ -61,5 +61,14 @@ public class SolrController {
         }
         String q = solrql.substring(0, solrql.length() - 5);
         return solrModelService.search(q, pageNum, pageSize);
+    }
+    /**
+     * 热门搜索
+     */
+    @ApiOperation(value = "/hotSearch", notes = "热门搜索")
+    @RequestMapping(value = "/hotSearch", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> search() {
+        return solrModelService.hotSearch();
     }
 }

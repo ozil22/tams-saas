@@ -1,11 +1,15 @@
 package com.pactera.tams.module.tool.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.github.pagehelper.PageInfo;
+import com.pactera.tams.common.utils.*;
+import com.pactera.tams.module.machine.service.TSDictService;
+import com.pactera.tams.module.tool.model.Tool;
+import com.pactera.tams.module.tool.model.ToolCatalog;
+import com.pactera.tams.module.tool.model.ToolCompose;
+import com.pactera.tams.module.tool.sevice.ToolCatalogService;
+import com.pactera.tams.module.tool.sevice.ToolComposeService;
+import com.pactera.tams.module.tool.sevice.ToolService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,21 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.pagehelper.PageInfo;
-import com.pactera.tams.common.utils.Constants;
-import com.pactera.tams.common.utils.DateUtils;
-import com.pactera.tams.common.utils.IdGenerator;
-import com.pactera.tams.common.utils.MapToObjectFactory;
-import com.pactera.tams.common.utils.StringFormatUtils;
-import com.pactera.tams.module.machine.service.TSDictService;
-import com.pactera.tams.module.tool.model.Tool;
-import com.pactera.tams.module.tool.model.ToolCatalog;
-import com.pactera.tams.module.tool.model.ToolCompose;
-import com.pactera.tams.module.tool.sevice.ToolCatalogService;
-import com.pactera.tams.module.tool.sevice.ToolComposeService;
-import com.pactera.tams.module.tool.sevice.ToolService;
-
-import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 刀具
@@ -234,6 +227,7 @@ public class ToolController {
 		ModelMap result = StringFormatUtils.getResultMessage();
 		try {
 			Tool tool = objectService.getObjectById(id);
+			objectService.addClick(id);
 			result.put("msg", "查询成功");
 			result.put("tool", tool);
 		} catch (Exception e) {
@@ -262,6 +256,8 @@ public class ToolController {
 			System.out.println(smallIdList);
 			result.put("msg", "查询成功");
 			result.put("smallIdList", smallIdList);
+
+			objectService.addClick(id);
 			//System.out.println(smallIdList);
 			result.put("code", "1");
 		} catch (Exception e) {

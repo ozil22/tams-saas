@@ -10,11 +10,13 @@ public interface SolrModelService {
      ModelMap addBeanAllIndex() throws Exception;
      ModelMap addBeanIndex(SolrModel solrModel) throws Exception;
      ModelMap deleteAllIndex() throws Exception;
-     List<Map<String, String>> search(String String, Integer pageNum, Integer pageSize);
+     Map<String, Object> search(String String, Integer pageNum, Integer pageSize);
      <T> void deleteByIds(String idName, List<T> ids);
      void deleteByQuery(String query);
      void deleteById(String idName, Object id);
      void deleteBean(SolrModel object, String idName);
      void updateBeanById(Object object, String idName);
      void updateBeanByQuerySting(Object object, String queryName);
+
+    Map<String,Object> hotSearch();
 }

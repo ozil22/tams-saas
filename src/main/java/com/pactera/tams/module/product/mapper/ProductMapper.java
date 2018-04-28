@@ -15,4 +15,6 @@ public interface ProductMapper extends Mapper<Product>{
 	int getTotal(Product bean);
 	List<SolrModel> findAllSolr();
 	SolrModel getSolr(String id);
+	List<Product> findHot();
+	void addClick(String id);
 }

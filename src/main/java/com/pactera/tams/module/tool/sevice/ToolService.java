@@ -151,4 +151,8 @@ public class ToolService {
         }
         return toolMapper.selectByExample(example);
     }
+
+    public void addClick(String id) {
+        toolMapper.addClick(id);
+    }
 }

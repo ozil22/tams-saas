@@ -6,8 +6,10 @@ import com.pactera.tams.module.product.mapper.ProductMapper;
 import com.pactera.tams.module.product.mapper.ProductTechnicsSchemeMapper;
 import com.pactera.tams.module.product.mapper.ProductTechnicsSchemeProcessMapper;
 import com.pactera.tams.module.product.mapper.ProductTechnicsSchemeWorkStepMapper;
+import com.pactera.tams.module.product.model.Product;
 import com.pactera.tams.module.solr.model.SolrModel;
 import com.pactera.tams.module.tool.mapper.ToolMapper;
+import com.pactera.tams.module.tool.model.Tool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
@@ -166,8 +168,9 @@ public class SolrModelServiceImpl implements SolrModelService {
      * @param pageSize
      * @return
      */
-    public List<Map<String, String>> search(String slorql, Integer pageNum, Integer pageSize) {
+    public Map<String, Object> search(String slorql, Integer pageNum, Integer pageSize) {
         log.info("=============slorql===========" + slorql);
+        Map<String, Object> m = new HashMap<>();
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         SolrQuery query = new SolrQuery();
         query.setQuery(slorql);
@@ -179,7 +182,7 @@ public class SolrModelServiceImpl implements SolrModelService {
         try {
             QueryResponse response = solr.query(query);
             SolrDocumentList docs = response.getResults();
-
+            long num =  docs.getNumFound();
             log.info("文档个数：" + docs.getNumFound());
             log.info("查询时间：" + response.getQTime());
 
@@ -194,7 +197,11 @@ public class SolrModelServiceImpl implements SolrModelService {
                 }
                 result.add(map);
             }
-            return result;
+            m.put("list",result);
+            m.put("pageNum",pageNum);
+            m.put("pageSize",pageSize);
+            m.put("totalPage",(num  +  pageSize  - 1) / pageSize);
+            return m;
         } catch (SolrServerException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -365,6 +372,16 @@ public class SolrModelServiceImpl implements SolrModelService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public Map<String, Object> hotSearch() {
+       List<Tool> tools = toolMapper.findHot();
+       List<Product> products = productMapper.findHot();
+       Map<String, Object> hot = new HashMap<>();
+       hot.put("tools",tools);
+       hot.put("products",products);
+       return hot;
     }
 
     public List<SolrModel> solrDocument2Entity(SolrDocumentList sds) {
