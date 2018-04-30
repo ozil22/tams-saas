@@ -122,4 +122,8 @@ public class ProductService {
 	public void addClick(String id) {
 		productMapper.addClick(id);
 	}
+
+    public List<Product> getAll() {
+		return productMapper.findAll();
+    }
 }

@@ -41,23 +41,23 @@
         order by s.create_date desc
     </select>
 
-    <select id="findPriceHistory" parameterType="com.pactera.tams.module.tool.vo.ToolPriceQuery"
+    <select id="findPriceHistory" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
             resultType="com.alibaba.fastjson.JSONObject">
-        SELECT TOOL_PRICE,PRICE_DATE
-        FROM tams_tool_price
+        select date_format(price_date, '%Y%m%d') price_date,tool_price
+        from tams_tool_price
         <where>
-            <if test="@Ognl@isNotEmpty(tool_id)">
-                AND TOOL_ID = #{tool_id}
+            <if test="tool_id != null and tool_id != ''">
+                and tool_id = #{tool_id}
             </if>
-            <if test="@Ognl@isNotEmpty(begin_date)">
-                AND  PRICE_DATE >= #{begin_date}
+            <if test="begin_date != null and begin_date != ''">
+                and  price_date >= #{begin_date}
             </if>
-            <if test="@Ognl@isNotEmpty(tool_id)">
-                AND  PRICE_DATE &lt;= #{end_date}
+            <if test="end_date != null and end_date != ''">
+                and  price_date &lt;= #{end_date}
             </if>
         </where>
-        GROUP BY TOOL_ID,PRICE_DATE
-        ORDER BY PRICE_DATE
+        group by date_format(price_date, '%Y%m%d')
+        order by price_date
     </select>
 
 </mapper>

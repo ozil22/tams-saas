@@ -155,4 +155,8 @@ public class ToolService {
     public void addClick(String id) {
         toolMapper.addClick(id);
     }
+
+    public List<Tool> getAll() {
+        return toolMapper.selectAll();
+    }
 }

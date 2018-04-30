@@ -113,4 +113,8 @@
         set click_num = click_num + 1
         where id = #{id}
     </update>
+
+    <select id="findAll">
+        select * from tams_product
+    </select>
 </mapper>

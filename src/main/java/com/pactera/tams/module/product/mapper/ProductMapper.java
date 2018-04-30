@@ -17,4 +17,6 @@ public interface ProductMapper extends Mapper<Product>{
 	SolrModel getSolr(String id);
 	List<Product> findHot();
 	void addClick(String id);
+
+    List<Product> findAll();
 }

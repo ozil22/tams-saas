@@ -315,4 +315,13 @@ public class ToolController {
 		}
 		return result;
 	}
+
+	/**
+	 * 查询
+	 */
+	@ApiOperation(value = "获取全部刀具",notes="获取全部刀具")
+	@RequestMapping("/getAll")
+	public List<Tool> getAll() {
+		return objectService.getAll();
+	}
 }

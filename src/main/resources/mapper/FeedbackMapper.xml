@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.pactera.tams.module.feedback.mapper.FeedbackMapper">
 	<select id="getPageList" parameterType="com.pactera.tams.module.feedback.model.Feedback" resultType="map">
-		select 
+		select
 			t.id,
 			t.work_no,
 			t.tool_name,
@@ -38,7 +38,7 @@
 		</if>
 		</select>
 		<select id="getBean" parameterType="com.pactera.tams.module.feedback.model.Feedback" resultType="com.pactera.tams.module.feedback.model.Feedback">
-		select 
+		select
 			t.id,
 			t.work_no as workNo,
 			t.tool_name as toolName,
@@ -75,4 +75,429 @@
 			and t.id = '${id}'
 		</if>
 		</select>
+		<select id="processRecord" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+				resultType="com.alibaba.fastjson.JSONObject">
+			select a.material_quality material_quality,m.material_quality_code material_quality_code,a.step_num,a.product_num
+			from
+				(select sum(if(s.id is null,0,1)) step_num,count(distinct p.id) product_num,p.id,p.material_quality material_quality
+				from tams_user_feed_back b
+				left join tams_product_technics_scheme t on b.technics_code = t.id
+				left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+				left join tams_product p on t.product_id = p.id
+				<where>
+					<if test="tool_id != null and tool_id != ''">
+						and s.tool_no = #{tool_id}
+					</if>
+					<if test="begin_date != null and begin_date != ''">
+						and  b.create_date >= #{begin_date}
+					</if>
+					<if test="end_date != null and end_date != ''">
+						and  b.create_date &lt;= #{end_date}
+					</if>
+					<if test="material_names != null and material_names != ''">
+					and  p.material_quality in <foreach collection="material_names" item="item" open="(" separator="," close=")">#{item}</foreach>
+					</if>
+				</where>
+				group by p.id) a
+			left join tams_material m on a.material_quality = m.material_quality_name
+			group by a.material_quality
+		</select>
+
+	<select id="processParamScope" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+			resultType="com.alibaba.fastjson.JSONObject">
+		select p.material_quality,
+		min(b.s) min_s,max(b.s) max_s,
+		min(b.f) min_f,max(b.f) max_f,
+		min(b.ap) min_ap,max(b.ap) max_ap,
+		min(b.ae) min_ae,max(b.ae) max_ae,
+		min(b.fn) min_fn,max(b.fn) max_fn,
+		min(b.vc) min_vc,max(b.vc) max_vc,
+		min(b.fz) min_fz,max(b.fz) max_fz
+		from tams_user_feed_back b
+		left join tams_product_technics_scheme t on b.technics_code = t.id
+		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+		left join tams_product p on t.product_id = p.id
+		left join tams_material m on p.material_quality = m.material_quality_name
+		<where>
+			<if test="tool_id != null and tool_id != ''">
+				and s.tool_no = #{tool_id}
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+				and  b.create_date >= #{begin_date}
+			</if>
+			<if test="end_date != null and end_date != ''">
+				and  b.create_date &lt;= #{end_date}
+			</if>
+			<if test="material_names != null and material_names != ''">
+			and  p.material_quality in <foreach collection="material_names" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+		group by p.material_quality
+	</select>
+
+	<select id="processParamCompare" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+					 resultType="com.alibaba.fastjson.JSONObject">
+		select date_format(b.create_date, '%Y-%m-%d %h ') time,b.vc,b.f,b.ap,
+		b.make_amount/s.amount tool_life,
+		(s.amount*e.tool_price)/b.make_amount cost
+		from tams_user_feed_back b
+		left join tams_product_technics_scheme t on b.technics_code = t.id
+		left join tams_product p on t.product_id = p.id
+		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool_price e on e.tool_id = l.id
+		<where>
+			<if test="tool_id != null and tool_id != ''">
+				and s.tool_no = #{tool_id}
+			</if>
+			<if test="product_id != null and product_id != ''">
+				and p.id = #{product_id}
+			</if>
+			<if test="scheme_id != null and scheme_id != ''">
+				and t.id = #{scheme_id}
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+				and  b.create_date >= #{begin_date}
+			</if>
+			<if test="end_date != null and end_date != ''">
+				and  b.create_date &lt;= #{end_date}
+			</if>
+			<if test="process_dates != null and process_dates != ''">
+				and  b.create_date in <foreach collection="process_dates" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+			<if test="material_names != null and material_names != ''">
+				and  p.material_quality in <foreach collection="material_names" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+		group by date_format(b.create_date, '%Y-%m-%d %h ')
+	</select>
+
+	<select id="schemeRecommend" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+			resultType="com.alibaba.fastjson.JSONObject">
+
+		select date_format(b.create_date, '%Y-%m-%d %h ') time,
+		b.vc,b.f,b.ap,b.make_amount/s.amount tool_life,
+		l.tool_name,l.tool_label,
+		(s.amount*e.tool_price)/b.make_amount cost ,
+		(b.vc*0.618)+((s.amount*e.tool_price)/b.make_amount*0.382) mark,
+		if(b.vc = max(b.vc),1,0) max_vc,
+		if((s.amount*e.tool_price)/b.make_amount= min((s.amount*e.tool_price)/b.make_amount),1,0) min_cost,
+		if((b.vc*0.618)+((s.amount*e.tool_price)/b.make_amount*0.382)= max((b.vc*0.618)+((s.amount*e.tool_price)/b.make_amount*0.382)),1,0) max_mark
+		from tams_user_feed_back b
+		left join tams_product_technics_scheme t on b.technics_code = t.id
+		left join tams_product p on t.product_id = p.id
+		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool_price e on e.tool_id = l.id
+		<where>
+			<if test="tool_id != null and tool_id != ''">
+				and s.tool_no = #{tool_id}
+			</if>
+			<if test="product_id != null and product_id != ''">
+				and p.id = #{product_id}
+			</if>
+			<if test="scheme_id != null and scheme_id != ''">
+				and t.id = #{scheme_id}
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+				and  b.create_date >= #{begin_date}
+			</if>
+			<if test="end_date != null and end_date != ''">
+				and  b.create_date &lt;= #{end_date}
+			</if>
+			<if test="process_dates != null and process_dates != ''">
+				and  b.create_date in <foreach collection="process_dates" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+			<if test="material_names != null and material_names != ''">
+				and  p.material_quality in <foreach collection="material_names" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+		group by date_format(b.create_date, '%Y-%m-%d %h ');
+	</select>
+
+	<select id="toolConsumptionCompare" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+						 resultType="com.alibaba.fastjson.JSONObject">
+	select a.tool_label,a.amount,b.amount,c.amount,
+		concat((a.amount-b.amount)/b.amount*100,'%') yoy,
+		concat((a.amount-c.amount)/c.amount*100,'%') qoq,
+		a.tool_cost,b.tool_cost,c.tool_cost,
+		concat((a.tool_cost-b.tool_cost)/b.tool_cost*100,'%') cost_yoy,
+		concat((a.tool_cost-c.tool_cost)/c.tool_cost*100,'%') cost_qoq
+	from
+	(select l.tool_label,sum(s.amount) amount,
+		sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.TECHNICS_CODE = t.CODE
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="tool_label != null and tool_label != ''">
+			and l.tool_label = #{tool_label}
+		</if>
+		<if test="product_id != null and product_id != ''">
+			and p.id = #{product_id}
+		</if>
+		<if test="scheme_id != null and scheme_id != ''">
+			and t.id = #{scheme_id}
+		</if>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(#{date})
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(#{date})
+				and  quarter(b.create_date) =  quarter(#{date})
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(#{date})
+				and  month(b.create_date) =  month(#{date})
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(#{date})
+				and  week(b.create_date) =  week(#{date})
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(#{date})
+				and  month(b.create_date) =  month(#{date})
+				and  day(b.create_date) =  day(#{date})
+			</if>
+		</if>
+	</where>
+	group by l.tool_label)a
+	LEFT JOIN
+	(select l.tool_label,sum(s.amount) amount,
+		sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.technics_code = t.code
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="tool_label != null and tool_label != ''">
+			and l.tool_label = #{tool_label}
+		</if>
+		<if test="product_id != null and product_id != ''">
+			and p.id = #{product_id}
+		</if>
+		<if test="scheme_id != null and scheme_id != ''">
+			and t.id = #{scheme_id}
+		</if>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 quarter))
+				and  quarter(b.create_date) =  quarter(date_sub(#{date},interval 1 quarter))
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 month))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 month))
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 week))
+				and  week(b.create_date) =  week(date_sub(#{date},interval 1 week))
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 day))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 day))
+				and  day(b.create_date) =  day(date_sub(#{date},interval 1 day))
+			</if>
+		</if>
+	</where>
+	group by l.tool_label)b
+	on a.tool_label = b.tool_label
+	left join
+	(select l.tool_label,sum(s.amount) amount,
+		sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.technics_code = t.code
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="tool_label != null and tool_label != ''">
+			and l.tool_label = #{tool_label}
+		</if>
+		<if test="product_id != null and product_id != ''">
+			and p.id = #{product_id}
+		</if>
+		<if test="scheme_id != null and scheme_id != ''">
+			and t.id = #{scheme_id}
+		</if>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  quarter(b.create_date) =  quarter(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  week(b.create_date) =  week(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 month))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 month))
+				and  day(b.create_date) =  day(date_sub(#{date},interval 1 month))
+			</if>
+		</if>
+	</where>
+	group by l.tool_label)c
+	on a.tool_label = c.tool_label
+	order by a.amount desc
+</select>
+
+<select id="toolConsumptionCompareGroupScheme" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+		resultType="com.alibaba.fastjson.JSONObject">
+	select a.product_label,a.scheme_code,a.amount,b.amount,c.amount,
+	concat((a.amount-b.amount)/b.amount*100,'%') yoy,
+	concat((a.amount-c.amount)/c.amount*100,'%') qoq,
+	a.tool_cost,b.tool_cost,c.tool_cost,
+	concat((a.tool_cost-b.tool_cost)/b.tool_cost*100,'%') cost_yoy,
+	concat((a.tool_cost-c.tool_cost)/c.tool_cost*100,'%') cost_qoq
+	from
+	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.TECHNICS_CODE = t.CODE
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(#{date})
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(#{date})
+				and  quarter(b.create_date) =  quarter(#{date})
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(#{date})
+				and  month(b.create_date) =  month(#{date})
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(#{date})
+				and  week(b.create_date) =  week(#{date})
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(#{date})
+				and  month(b.create_date) =  month(#{date})
+				and  day(b.create_date) =  day(#{date})
+			</if>
+		</if>
+	</where>
+	group by t.id)a
+	LEFT JOIN
+	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.technics_code = t.code
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 quarter))
+				and  quarter(b.create_date) =  quarter(date_sub(#{date},interval 1 quarter))
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 month))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 month))
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 week))
+				and  week(b.create_date) =  week(date_sub(#{date},interval 1 week))
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 day))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 day))
+				and  day(b.create_date) =  day(date_sub(#{date},interval 1 day))
+			</if>
+		</if>
+	</where>
+	group by t.id)b
+	on a.scheme_code = b.scheme_code
+	left join
+	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	sum(s.amount*e.tool_price) tool_cost
+	from tams_user_feed_back b
+	left join tams_product_technics_scheme t on b.technics_code = t.code
+	left join tams_product p on t.product_id = p.id
+	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool_price e on e.tool_id = l.id
+	<where>
+		<if test="date != null and date != ''">
+			<if test="group =='year' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='quarter' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  quarter(b.create_date) =  quarter(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='month' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='week' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 year))
+				and  week(b.create_date) =  week(date_sub(#{date},interval 1 year))
+			</if>
+			<if test="group =='day' ">
+				and  year(b.create_date) =  year(date_sub(#{date},interval 1 month))
+				and  month(b.create_date) =  month(date_sub(#{date},interval 1 month))
+				and  day(b.create_date) =  day(date_sub(#{date},interval 1 month))
+			</if>
+		</if>
+	</where>
+	group by t.id)c
+	on a.scheme_code = c.scheme_code
+	order by a.amount desc
+</select>
+
+	<select id="toolConsumption" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+			resultType="com.alibaba.fastjson.JSONObject">
+		select l.tool_label,p.product_label,t.scheme_code,sum(s.amount) amount,
+		sum(s.amount*e.tool_price) tool_cost
+		from tams_user_feed_back b
+		left join tams_product_technics_scheme t on b.technics_code = t.code
+		left join tams_product p on t.product_id = p.id
+		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool_price e on e.tool_id = l.id
+		<where>
+			<if test="tool_label != null and tool_label != ''">
+				and l.tool_label = #{tool_label}
+			</if>
+			<if test="product_id != null and product_id != ''">
+				and p.id = #{product_id}
+			</if>
+			<if test="scheme_id != null and scheme_id != ''">
+				and t.id = #{scheme_id}
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+				and  b.create_date >= #{begin_date}
+			</if>
+			<if test="end_date != null and end_date != ''">
+				and  b.create_date &lt;= #{end_date}
+			</if>
+		</where>
+	</select>
 </mapper>

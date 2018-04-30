@@ -234,3 +234,4 @@ public class Tool extends BaseEntity {
         this.click_num = click_num;
     }
 }
+

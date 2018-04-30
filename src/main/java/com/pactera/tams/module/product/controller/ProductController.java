@@ -266,4 +266,14 @@ public class ProductController {
 		}
 		return result;
 	}
+
+	/**
+	 * 获取全部产品
+	 */
+	@ApiOperation(value = "获取全部产品",notes="获取全部产品")
+	@RequestMapping("/getAll")
+	public List<Product> getAll(@RequestParam String id) {
+
+		return objectService.getAll();
+	}
 }

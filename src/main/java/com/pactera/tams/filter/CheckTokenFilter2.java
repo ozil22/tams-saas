@@ -48,6 +48,7 @@ public class CheckTokenFilter2  implements Filter {
 		NOT_FILTER_URLS_CONTAINS.put("static", "静态资源");
 		NOT_FILTER_URLS_CONTAINS.put("upload", "上传");
 		NOT_FILTER_URLS_CONTAINS.put("/solr/", "solr");
+		NOT_FILTER_URLS_CONTAINS.put("/report/", "report");
 	}
 	
 	@Override

@@ -50,6 +50,7 @@ public class CheckTokenFilter  implements Filter {
 		NOT_FILTER_URLS_CONTAINS.put("upload", "上传");
 		NOT_FILTER_URLS_CONTAINS.put("/druid/", "数据库连接监控");
 		NOT_FILTER_URLS_CONTAINS.put("/solr/", "solr");
+		NOT_FILTER_URLS_CONTAINS.put("/report/", "report");
 	}
 	
 	@Override
