@@ -500,4 +500,165 @@
 			</if>
 		</where>
 	</select>
+
+    <select id="makeAmountTrend" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select sum(b.qualified_amount),sum(b.waste_amount),sum(b.make_amount),
+            <if test="group =='year' ">
+                date_format(b.create_date,'%Y') date
+            </if>
+            <if test="group =='quarter' ">
+                concat(year(b.create_date),'年',quarter(b.create_date),'季度') date
+            </if>
+            <if test="group =='month' ">
+                date_format(b.create_date,'%Y-%m') date
+            </if>
+            <if test="group =='week' ">
+                concat(year(b.create_date),'年',week(b.create_date),'周') date
+            </if>
+            <if test="group =='day' ">
+                date_format(b.create_date,'%Y-%m-%d') date
+            </if>
+        from tams_user_feed_back b
+        <where>
+            <if test="begin_date != null and begin_date != ''">
+                and  b.create_date >= #{begin_date}
+            </if>
+            <if test="end_date != null and end_date != ''">
+                and  b.create_date &lt;= #{end_date}
+            </if>
+            </where>
+            <if test="group =='year' ">
+                group by date_format(b.create_date,'%Y')
+            </if>
+            <if test="group =='quarter' ">
+                group by   concat(year(b.create_date),'年',quarter(b.create_date),'季度')
+            </if>
+            <if test="group =='month' ">
+                group by  date_format(b.create_date,'%Y-%m') date
+            </if>
+            <if test="group =='week' ">
+                group by concat(year(b.create_date),'年',week(b.create_date),'周')
+            </if>
+            <if test="group =='day' ">
+                group by date_format(b.create_date,'%Y-%m-%d') date
+            </if>
+    </select>
+
+    <select id="makeAmount" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select sum(b.qualified_amount),sum(b.waste_amount),sum(b.make_amount),
+          avg(b.qualified_amount) avg_qualified_amount,avg(b.make_amount) avg_make_amount,
+        sum(b.waste_amount)/(sum(b.qualified_amount)+sum(b.waste_amount)) waste_ratio
+        from tams_user_feed_back b
+        <where>
+            <if test="begin_date != null and begin_date != ''">
+                and  b.create_date >= #{begin_date}
+            </if>
+            <if test="end_date != null and end_date != ''">
+                and  b.create_date &lt;= #{end_date}
+            </if>
+        </where>
+    </select>
+
+    <select id="makeAmountTrendByProduct" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select sum(b.qualified_amount),sum(b.waste_amount),sum(b.make_amount),b.technics_code,
+        <if test="group =='year' ">
+            date_format(b.create_date,'%Y') date
+        </if>
+        <if test="group =='quarter' ">
+            concat(year(b.create_date),'年',quarter(b.create_date),'季度') date
+        </if>
+        <if test="group =='month' ">
+            date_format(b.create_date,'%Y-%m') date
+        </if>
+        <if test="group =='week' ">
+            concat(year(b.create_date),'年',week(b.create_date),'周') date
+        </if>
+        <if test="group =='day' ">
+            date_format(b.create_date,'%Y-%m-%d') date
+        </if>
+        from tams_user_feed_back b
+        left join tams_product_technics_scheme t on b.technics_code = t.code
+        left join tams_product p on t.product_id = p.id
+        <where>
+            <if test="begin_date != null and begin_date != ''">
+                and  b.create_date >= #{begin_date}
+            </if>
+            <if test="end_date != null and end_date != ''">
+            and  b.create_date &lt;= #{end_date}
+            </if>
+            <if test="product_id != null and product_id != ''">
+                and  p.id = #{product_id}
+            </if>
+        </where>
+        <if test="group =='year' ">
+            group by date_format(b.create_date,'%Y')
+        </if>
+        <if test="group =='quarter' ">
+            group by   concat(year(b.create_date),'年',quarter(b.create_date),'季度')
+        </if>
+        <if test="group =='month' ">
+            group by  date_format(b.create_date,'%Y-%m') date
+        </if>
+        <if test="group =='week' ">
+            group by concat(year(b.create_date),'年',week(b.create_date),'周')
+        </if>
+        <if test="group =='day' ">
+            group by date_format(b.create_date,'%Y-%m-%d') date
+        </if>
+    </select>
+    <select id="toolConsumptionByProduct" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+            resultType="com.alibaba.fastjson.JSONObject">
+        select p.product_label,t.technics_name,sum(s.amount) amount,sum(s.amount*e.tool_price) tool_cost,
+        <if test="group =='year' ">
+            date_format(b.create_date,'%Y') date
+        </if>
+        <if test="group =='quarter' ">
+            concat(year(b.create_date),'年',quarter(b.create_date),'季度') date
+        </if>
+        <if test="group =='month' ">
+            date_format(b.create_date,'%Y-%m') date
+        </if>
+        <if test="group =='week' ">
+            concat(year(b.create_date),'年',week(b.create_date),'周') date
+        </if>
+        <if test="group =='day' ">
+            date_format(b.create_date,'%Y-%m-%d') date
+        </if>
+        from tams_user_feed_back b
+        left join tams_product_technics_scheme t on b.technics_code = t.code
+        left join tams_product p on t.product_id = p.id
+        left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+        left join tams_tool l on s.tool_no = l.id
+        left join tams_tool_price e on e.tool_id = l.id
+        <where>
+            <if test="begin_date != null and begin_date != ''">
+                and  b.create_date >= #{begin_date}
+            </if>
+            <if test="end_date != null and end_date != ''">
+                and  b.create_date &lt;= #{end_date}
+            </if>
+            <if test="product_id != null and product_id != ''">
+                and  p.id = #{product_id}
+            </if>
+        </where>
+        <if test="group =='year' ">
+            group by date_format(b.create_date,'%Y')
+        </if>
+        <if test="group =='quarter' ">
+            group by   concat(year(b.create_date),'年',quarter(b.create_date),'季度')
+        </if>
+        <if test="group =='month' ">
+            group by  date_format(b.create_date,'%Y-%m') date
+        </if>
+        <if test="group =='week' ">
+            group by concat(year(b.create_date),'年',week(b.create_date),'周')
+        </if>
+        <if test="group =='day' ">
+            group by date_format(b.create_date,'%Y-%m-%d') date
+        </if>
+        order by date
+    </select>
 </mapper>

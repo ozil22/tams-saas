@@ -1,6 +1,6 @@
 package com.pactera.tams.module.tool.mapper;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.pactera.tams.module.report.vo.ReportQuery;
 import com.pactera.tams.module.tool.model.ToolPrice;
 import tk.mybatis.mapper.common.Mapper;
@@ -20,5 +20,5 @@ public interface ToolPriceMapper extends Mapper<ToolPrice>{
 	 * @param query
 	 * @return
 	 */
-	List<JSON> findPriceHistory(ReportQuery query);
+	List<JSONObject> findPriceHistory(ReportQuery query);
 }
