@@ -36,4 +36,5 @@ public interface FeedbackMapper extends MyMapper<Feedback>{
     List<JSONObject> makeAmountTrendByProduct(ReportQuery q);
 
     List<JSONObject> toolConsumptionByProduct(ReportQuery q);
+    List<JSONObject> toolConsumptionTrend(ReportQuery q);
 }

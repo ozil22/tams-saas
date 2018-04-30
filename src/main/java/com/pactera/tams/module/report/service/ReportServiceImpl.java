@@ -161,13 +161,6 @@ public class ReportServiceImpl implements ReportService {
         for (JSONObject json : list) {
             schemes.add(json.getString("technics_name"));
         }
-        int a =1;
-        for (int i = 0; i <list.size() ; i++) {
-            if (i == 0 )
-        }
-
-
-
         while (!list.isEmpty()){
             for (String scheme : schemes) {
                 JSONObject o = new JSONObject();
@@ -179,7 +172,7 @@ public class ReportServiceImpl implements ReportService {
                         o.put(scheme+"_amount",json.getString("amount"));
                         o.put(scheme+"_tool_cost",json.getString("tool_cost"));
                         o.put("technics_name",json.getString(scheme));
-                        new_list.add(o)
+                        new_list.add(o);
                         iterator.remove();
                     }else{
                         break;
@@ -193,5 +186,14 @@ public class ReportServiceImpl implements ReportService {
         map.put("compare_list",schemes);
         map.put("list",list);
         return map;
+    }
+
+    @Override
+    public List<JSONObject> toolConsumptionTrend(String begin, String end, String group) {
+        ReportQuery q = new ReportQuery();
+        q.setBegin_date(begin);
+        q.setEnd_date(end);
+        q.setGroup(group);
+        return feedbackMapper.toolConsumptionTrend(q);
     }
 }

@@ -122,4 +122,13 @@ public class ReportController {
                                              @RequestParam(required = false) String group,@RequestParam(required = false) String product_id) {
         return reportService.toolConsumptionByProduct(begin, end,group,product_id);
     }
+    /**
+     * 刀具消耗
+     */
+    @ApiOperation(value = "刀具消耗", notes = "刀具消耗")
+    @RequestMapping(value = "/toolConsumptionTrend", method = RequestMethod.GET)
+    public List<JSONObject> toolConsumptionTrend(@RequestParam(required = false) String begin, @RequestParam(required = false) String end,
+                                            @RequestParam(required = false) String group) {
+        return reportService.toolConsumptionTrend(begin, end,group);
+    }
 }

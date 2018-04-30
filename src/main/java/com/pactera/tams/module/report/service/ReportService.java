@@ -25,4 +25,6 @@ public interface ReportService {
     List<JSONObject> makeAmountTrendByProduct(String begin, String end, String group,String product_id);
 
     Map<String,Object> toolConsumptionByProduct(String begin, String end, String group, String product_id);
+
+    List<JSONObject> toolConsumptionTrend(String begin, String end, String group);
 }
