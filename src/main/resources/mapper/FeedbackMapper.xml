@@ -563,7 +563,7 @@
 
     <select id="makeAmountTrendByProduct" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
             resultType="com.alibaba.fastjson.JSONObject">
-        select sum(b.qualified_amount),sum(b.waste_amount),sum(b.make_amount),b.technics_code
+        select sum(b.qualified_amount) qualified_amount,sum(b.waste_amount) waste_amount,sum(b.make_amount) make_amount,b.technics_code technics_code
         <if test="group =='year' ">
             ,date_format(b.create_date,'%Y') date
         </if>
@@ -709,4 +709,41 @@
         </if>
         order by date
     </select>
+
+	<select id="productSchemeCompare" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
+			resultType="com.alibaba.fastjson.JSONObject">
+		select t.id,sum(b.qualified_amount) qualified_amount,
+			sum(b.make_amount) make_amount,
+			sum(b.waste_amount) waste_amount,
+			make_amount/qualified_amount ratio,
+			sum(s.workstep_date) use_time,
+			timestampdiff(hour,b.start_time, b.end_time) standard_time,
+			count(distinct l.catalog_id) catalog_num,
+			sum(s.amount) amount,
+			sum(s.amount*e.tool_price) money,
+			count(distinct o.id) scheme_num,
+			count(distinct o.machine_situation) machine_num
+		from tams_user_feed_back b
+		left join tams_product_technics_scheme t on b.technics_code = t.id
+		left join tams_product p on t.product_id = p.id
+		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
+		left join tams_product_technics_scheme_process o on s.scheme_id = o.id
+		left join tams_tool l on s.tool_no = l.video_id
+		left join tams_tool_price e on e.tool_id = l.id
+		<where>
+			<if test="product_id != null and product_id != ''">
+				and p.id = #{product_id}
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+				and  b.create_date >= #{begin_date}
+			</if>
+			<if test="end_date != null and end_date != ''">
+				and  b.create_date &lt;= #{end_date}
+			</if>
+			<if test="scheme_ids != null and scheme_ids != ''">
+				and  t.id in <foreach collection="scheme_ids" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+		group by t.id
+	</select>
 </mapper>

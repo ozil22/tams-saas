@@ -27,4 +27,6 @@ public interface ReportService {
     Map<String,Object> toolConsumptionByProduct(String begin, String end, String group, String product_id);
 
     List<JSONObject> toolConsumptionTrend(String begin, String end, String group);
+
+    List<JSONObject> productSchemeCompare(String begin, String end, String scheme_ids, String product_id);
 }

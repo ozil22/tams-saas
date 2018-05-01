@@ -129,4 +129,14 @@ public class ReportController {
                                             @RequestParam(required = false) String group) {
         return ResultUtils.genSuccesResult(reportService.toolConsumptionTrend(begin, end,group));
     }
+
+    /**
+     * 产品工艺方案对比
+     */
+    @ApiOperation(value = "产品工艺方案对比", notes = "产品工艺方案对比")
+    @RequestMapping(value = "/productSchemeCompare", method = RequestMethod.GET)
+    public RestResult productSchemeCompare(@RequestParam(required = false) String begin, @RequestParam(required = false) String end,
+                                           @RequestParam(required = false) String scheme_ids,@RequestParam(required = false) String product_id) {
+        return ResultUtils.genSuccesResult(reportService.productSchemeCompare(begin, end,scheme_ids,product_id));
+    }
 }

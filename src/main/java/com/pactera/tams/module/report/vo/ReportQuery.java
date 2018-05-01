@@ -8,6 +8,7 @@ public class ReportQuery extends BaseEntity{
     private String end_date;
     private String[] material_names;
     private String[] process_dates;
+    private String[] scheme_ids;
     private String material_name;
     private String product_id;
     private String scheme_id;
@@ -102,5 +103,13 @@ public class ReportQuery extends BaseEntity{
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String[] getScheme_ids() {
+        return scheme_ids;
+    }
+
+    public void setScheme_ids(String[] scheme_ids) {
+        this.scheme_ids = scheme_ids;
     }
 }

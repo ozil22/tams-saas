@@ -204,4 +204,17 @@ public class ReportServiceImpl implements ReportService {
         q.setGroup(group);
         return feedbackMapper.toolConsumptionTrend(q);
     }
+
+    @Override
+    public List<JSONObject> productSchemeCompare(String begin, String end, String scheme_ids, String product_id) {
+        ReportQuery q = new ReportQuery();
+        q.setBegin_date(begin);
+        q.setEnd_date(end);
+        q.setProduct_id(product_id);
+        if (StringUtils.isNotBlank(scheme_ids)){
+            String[] ids = scheme_ids.split(",");
+            q.setScheme_ids(ids);
+        }
+        return feedbackMapper.productSchemeCompare(q);
+    }
 }
