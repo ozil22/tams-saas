@@ -27,7 +27,11 @@ public class ReportServiceImpl implements ReportService {
         q.setTool_id(tool_id);
         q.setBegin_date(begin);
         q.setEnd_date(end);
-        return toolPriceMapper.findPriceHistory(q);
+        List<JSONObject> list =  toolPriceMapper.findPriceHistory(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -40,7 +44,11 @@ public class ReportServiceImpl implements ReportService {
             String[] names = material_names.split(",");
             q.setMaterial_names(names);
         }
-        return feedbackMapper.processRecord(q);
+        List<JSONObject> list =  feedbackMapper.processRecord(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -53,7 +61,11 @@ public class ReportServiceImpl implements ReportService {
             String[] names = material_names.split(",");
             q.setMaterial_names(names);
         }
-        return feedbackMapper.processParamScope(q);
+        List<JSONObject> list =  feedbackMapper.processParamScope(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -70,7 +82,11 @@ public class ReportServiceImpl implements ReportService {
             q.setProcess_dates(dates);
         }
 
-        return feedbackMapper.processParamCompare(q);
+        List<JSONObject> list =  feedbackMapper.processParamCompare(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -86,7 +102,11 @@ public class ReportServiceImpl implements ReportService {
             q.setProcess_dates(dates);
         }
 
-        return feedbackMapper.schemeRecommend(q);
+        List<JSONObject> list =  feedbackMapper.schemeRecommend(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -99,15 +119,22 @@ public class ReportServiceImpl implements ReportService {
         q.setProduct_id(product_id);
         q.setGroup(group);
         q.setDate(date);
-        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(begin)){
-            return feedbackMapper.toolConsumptionCompare(q);
+        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(begin)) {
+            List<JSONObject> list = feedbackMapper.toolConsumptionCompare(q);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            return list;
 
-        }else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(date)){
-            return feedbackMapper.toolConsumption(q);
+        } else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(date)) {
+            List<JSONObject> list = feedbackMapper.toolConsumption(q);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            return list;
         }
-        return null;
+        return new ArrayList<>();
     }
-
     @Override
     public List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group, String date) {
         ReportQuery q = new ReportQuery();
@@ -117,12 +144,19 @@ public class ReportServiceImpl implements ReportService {
         q.setGroup(group);
         q.setDate(date);
         if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(begin)){
-            return feedbackMapper.toolConsumptionCompareGroupScheme(q);
-
+            List<JSONObject> list =  feedbackMapper.toolConsumptionCompareGroupScheme(q);
+            if (list == null){
+                list = new ArrayList<>();
+            }
+            return list;
         }else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(date)){
-            return feedbackMapper.toolConsumption(q);
+            List<JSONObject> list =  feedbackMapper.toolConsumption(q);
+            if (list == null){
+                list = new ArrayList<>();
+            }
+            return list;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -153,7 +187,11 @@ public class ReportServiceImpl implements ReportService {
         q.setEnd_date(end);
         q.setProduct_id(product_id);
         q.setGroup(group);
-        return feedbackMapper.makeAmountTrendByProduct(q);
+        List<JSONObject> list =  feedbackMapper.makeAmountTrendByProduct(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -164,6 +202,8 @@ public class ReportServiceImpl implements ReportService {
         q.setProduct_id(product_id);
         q.setGroup(group);
         List<JSONObject> list = feedbackMapper.toolConsumptionByProduct(q);
+        List<JSONObject> old_list = new ArrayList<>();
+        old_list.addAll(list);
         List<JSONObject> new_list = new ArrayList<>();
         Set<String> schemes = new HashSet<>();
         for (JSONObject json : list) {
@@ -191,8 +231,8 @@ public class ReportServiceImpl implements ReportService {
 
         Map<String,Object> map = new HashMap<>();
         map.put("technics_list",schemes);
-        map.put("compare_list",schemes);
-        map.put("list",list);
+        map.put("compare_list",new_list);
+        map.put("list",old_list);
         return map;
     }
 
@@ -202,7 +242,11 @@ public class ReportServiceImpl implements ReportService {
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setGroup(group);
-        return feedbackMapper.toolConsumptionTrend(q);
+        List<JSONObject> list =  feedbackMapper.toolConsumptionTrend(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
     @Override
@@ -215,6 +259,10 @@ public class ReportServiceImpl implements ReportService {
             String[] ids = scheme_ids.split(",");
             q.setScheme_ids(ids);
         }
-        return feedbackMapper.productSchemeCompare(q);
+        List<JSONObject> list =  feedbackMapper.productSchemeCompare(q);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 }
