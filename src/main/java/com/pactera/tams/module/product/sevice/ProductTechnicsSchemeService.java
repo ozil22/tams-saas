@@ -148,4 +148,8 @@ public class ProductTechnicsSchemeService {
 	public int getAllListCount(ProductTechnicsScheme bean) {
 		return objectMapper.getAllListCount(bean);
 	}
+
+    public List<ProductTechnicsScheme> getAll() {
+		return objectMapper.getAll();
+    }
 }

@@ -21,4 +21,6 @@ public interface ProductTechnicsSchemeMapper extends Mapper<ProductTechnicsSchem
 	int getAllListCount(ProductTechnicsScheme bean);
 	List<SolrModel> findAllSolr();
 	SolrModel getSolr(String id);
+
+    List<ProductTechnicsScheme> getAll();
 }

@@ -1,13 +1,15 @@
 package com.pactera.tams.module.product.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import com.pactera.tams.common.utils.*;
+import com.pactera.tams.common.utils.excel.PruductTechnicsProcess;
+import com.pactera.tams.module.product.model.ProductTechnicsScheme;
+import com.pactera.tams.module.product.model.ProductTechnicsSchemeProcess;
+import com.pactera.tams.module.product.model.ProductTechnicsSchemeWorkStep;
+import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeProcessService;
+import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeService;
+import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeWorkStepService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -16,22 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pactera.tams.common.utils.DateUtils;
-import com.pactera.tams.common.utils.ExportExcelUtils;
-import com.pactera.tams.common.utils.IdGenerator;
-import com.pactera.tams.common.utils.JavaBeanToJavaBean;
-import com.pactera.tams.common.utils.MapToObjectFactory;
-import com.pactera.tams.common.utils.StringFormatUtils;
-import com.pactera.tams.common.utils.excel.PruductTechnicsProcess;
-import com.pactera.tams.module.product.model.ProductTechnicsScheme;
-import com.pactera.tams.module.product.model.ProductTechnicsSchemeProcess;
-import com.pactera.tams.module.product.model.ProductTechnicsSchemeWorkStep;
-import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeProcessService;
-import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeService;
-import com.pactera.tams.module.product.sevice.ProductTechnicsSchemeWorkStepService;
-
-import cn.afterturn.easypoi.excel.entity.ExportParams;
-import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -370,5 +362,13 @@ public class ProductTechnicsSchemeController {
 			return result;
 		}
 		return result;
+	}
+	/**
+	 * 获取全部工艺
+	 */
+	@ApiOperation(value = "获取全部工艺",notes="获取全部工艺")
+	@RequestMapping("/getAll")
+	public List<ProductTechnicsScheme> getAll(@RequestBody Map map) {
+		return objectService.getAll();
 	}
 }

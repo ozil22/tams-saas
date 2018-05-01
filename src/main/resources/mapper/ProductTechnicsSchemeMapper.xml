@@ -175,4 +175,10 @@
 		LEFT JOIN tams_product p ON p.ID = s.PRODUCT_ID
 		WHERE s.id=#{id}
 	</select>
+
+	<select id="getAll" resultType="com.pactera.tams.module.product.model.ProductTechnicsScheme">
+		select
+		*
+		from tams_product_technics_scheme
+	</select>
 </mapper>

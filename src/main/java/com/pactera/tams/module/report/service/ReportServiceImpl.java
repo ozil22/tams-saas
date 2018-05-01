@@ -132,8 +132,16 @@ public class ReportServiceImpl implements ReportService {
         q.setEnd_date(end);
         q.setGroup(group);
         Map<String,List<JSONObject>> map = new HashMap<>();
-        map.put("makeAmount",feedbackMapper.makeAmount(q));
-        map.put("makeAmountTrend",feedbackMapper.makeAmountTrend(q));
+        List<JSONObject> makeAmount = feedbackMapper.makeAmount(q);
+        if(makeAmount == null){
+            makeAmount = new ArrayList<>();
+        }
+        List<JSONObject> makeAmountTrend = feedbackMapper.makeAmountTrend(q);
+        if(makeAmountTrend == null){
+            makeAmountTrend = new ArrayList<>();
+        }
+        map.put("makeAmount",makeAmount);
+        map.put("makeAmountTrend",makeAmountTrend);
 
         return map;
     }
