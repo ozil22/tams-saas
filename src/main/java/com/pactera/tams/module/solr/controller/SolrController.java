@@ -2,8 +2,10 @@ package com.pactera.tams.module.solr.controller;
 
 import com.pactera.tams.module.solr.model.SolrModel;
 import com.pactera.tams.module.solr.service.SolrModelService;
+import com.pactera.tams.module.solr.util.BaseResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,13 +27,25 @@ public class SolrController {
     /**
      * 添加入solr索引
      */
-//    @RequestMapping(value = "/pushDataIntoSolr", method = RequestMethod.POST)
-//    @ResponseBody
-//    public ModelMap pushDataIntoSolr() throws Exception {
-//        BaseResponse ress = new BaseResponse();
-//        ModelMap modelMap = solrModelService.addBeanAllIndex();
-//        return modelMap;
-//    }
+    @ApiOperation(value = "添加全部索引", notes = "添加全部索引")
+    @RequestMapping(value = "/pushDataIntoSolr", method = RequestMethod.GET)
+    @ResponseBody
+    public ModelMap pushDataIntoSolr() throws Exception {
+        BaseResponse ress = new BaseResponse();
+        ModelMap modelMap = solrModelService.addBeanAllIndex();
+        return modelMap;
+    }
+    /**
+     * 删除入solr索引
+     */
+    @ApiOperation(value = "删除全部索引", notes = "删除全部索引")
+    @RequestMapping(value = "/deleteAllIndex", method = RequestMethod.GET)
+    @ResponseBody
+    public ModelMap deleteAllIndex() throws Exception {
+        BaseResponse ress = new BaseResponse();
+        ModelMap modelMap = solrModelService.deleteAllIndex();
+        return modelMap;
+    }
 
     /**
      * 快速查询
