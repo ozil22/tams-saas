@@ -712,7 +712,7 @@
 
 	<select id="productSchemeCompare" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
 			resultType="com.alibaba.fastjson.JSONObject">
-		select t.id,sum(b.qualified_amount) qualified_amount,
+		select t.technics_name,sum(b.qualified_amount) qualified_amount,
 			sum(b.make_amount) make_amount,
 			sum(b.waste_amount) waste_amount,
 			make_amount/qualified_amount ratio,
@@ -720,7 +720,7 @@
 			timestampdiff(hour,b.start_time, b.end_time) standard_time,
 			count(distinct l.catalog_id) catalog_num,
 			sum(s.amount) amount,
-			sum(s.amount*e.tool_price) money,
+			sum(s.amount*e.tool_price) tool_cost,
 			count(distinct o.id) scheme_num,
 			count(distinct o.machine_situation) machine_num
 		from tams_user_feed_back b

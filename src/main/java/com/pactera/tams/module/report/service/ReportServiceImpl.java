@@ -111,6 +111,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<JSONObject> toolConsumption(String tool_label, String begin, String end, String product_id, String scheme_id,String group,String date) {
+        if (begin != null && begin.equals(end)){
+            date = begin;
+        }
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
@@ -137,6 +140,9 @@ public class ReportServiceImpl implements ReportService {
     }
     @Override
     public List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group, String date) {
+        if (begin != null && begin.equals(end)){
+            date = begin;
+        }
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
@@ -207,7 +213,10 @@ public class ReportServiceImpl implements ReportService {
         List<JSONObject> new_list = new ArrayList<>();
         Set<String> schemes = new HashSet<>();
         for (JSONObject json : list) {
-            schemes.add(json.getString("technics_name"));
+            String scheme = json.getString("technics_name");
+            if(StringUtils.isNotBlank(scheme)){
+            schemes.add(scheme);
+            }
         }
         while (!list.isEmpty()){
             for (String scheme : schemes) {
