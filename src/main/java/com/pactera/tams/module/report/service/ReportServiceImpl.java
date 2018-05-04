@@ -27,8 +27,8 @@ public class ReportServiceImpl implements ReportService {
         q.setTool_id(tool_id);
         q.setBegin_date(begin);
         q.setEnd_date(end);
-        List<JSONObject> list =  toolPriceMapper.findPriceHistory(q);
-        if (list == null){
+        List<JSONObject> list = toolPriceMapper.findPriceHistory(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
@@ -44,8 +44,8 @@ public class ReportServiceImpl implements ReportService {
             String[] names = material_names.split(",");
             q.setMaterial_names(names);
         }
-        List<JSONObject> list =  feedbackMapper.processRecord(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.processRecord(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
@@ -61,15 +61,15 @@ public class ReportServiceImpl implements ReportService {
             String[] names = material_names.split(",");
             q.setMaterial_names(names);
         }
-        List<JSONObject> list =  feedbackMapper.processParamScope(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.processParamScope(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
     }
 
     @Override
-    public List<JSONObject> processParamCompare(String tool_id, String begin, String end, String material_names, String product_id, String scheme_id,String process_dates) {
+    public List<JSONObject> processParamCompare(String tool_id, String begin, String end, String material_names, String product_id, String scheme_id, String process_dates) {
         ReportQuery q = new ReportQuery();
         q.setTool_id(tool_id);
         q.setBegin_date(begin);
@@ -77,13 +77,13 @@ public class ReportServiceImpl implements ReportService {
         q.setMaterial_name(material_names);
         q.setProduct_id(product_id);
         q.setScheme_id(scheme_id);
-        if (StringUtils.isNotBlank(process_dates)){
+        if (StringUtils.isNotBlank(process_dates)) {
             String[] dates = process_dates.split(",");
             q.setProcess_dates(dates);
         }
 
-        List<JSONObject> list =  feedbackMapper.processParamCompare(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.processParamCompare(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
@@ -97,151 +97,154 @@ public class ReportServiceImpl implements ReportService {
         q.setEnd_date(end);
         q.setMaterial_name(material_names);
         q.setProduct_id(product_id);
-        if (StringUtils.isNotBlank(process_dates)){
+        if (StringUtils.isNotBlank(process_dates)) {
             String[] dates = process_dates.split(",");
             q.setProcess_dates(dates);
         }
 
-        List<JSONObject> list =  feedbackMapper.schemeRecommend(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.schemeRecommend(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
     }
 
     @Override
-    public List<JSONObject> toolConsumption(String tool_label, String begin, String end, String product_id, String scheme_id,String group,String date) {
-        if (begin != null && begin.equals(end)){
-            date = begin;
-        }
+    public List<JSONObject> toolConsumption(String tool_label, String begin, String end, String product_id, String scheme_id, String group) {
         ReportQuery q = new ReportQuery();
+        if (begin != null && begin.equals(end)) {
+            q.setDate(begin);
+        }
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setTool_label(tool_label);
         q.setScheme_id(scheme_id);
         q.setProduct_id(product_id);
         q.setGroup(group);
-        q.setDate(date);
-        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(begin)) {
-            List<JSONObject> list = feedbackMapper.toolConsumptionCompare(q);
-            if (list == null) {
-                list = new ArrayList<>();
-            }
-            return list;
+        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(end)) {
+            if (!begin.equals(end)) {
+                List<JSONObject> list = feedbackMapper.toolConsumptionCompare(q);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
 
-        } else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(date)) {
-            List<JSONObject> list = feedbackMapper.toolConsumption(q);
-            if (list == null) {
-                list = new ArrayList<>();
+            } else {
+                List<JSONObject> list = feedbackMapper.toolConsumption(q);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
             }
-            return list;
         }
         return new ArrayList<>();
     }
+
     @Override
-    public List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group, String date) {
-        if (begin != null && begin.equals(end)){
-            date = begin;
-        }
+    public List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group) {
         ReportQuery q = new ReportQuery();
+        if (begin != null && begin.equals(end)) {
+            q.setDate(begin);
+        }
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setScheme_id(scheme_id);
         q.setGroup(group);
-        q.setDate(date);
-        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(begin)){
-            List<JSONObject> list =  feedbackMapper.toolConsumptionCompareGroupScheme(q);
-            if (list == null){
-                list = new ArrayList<>();
+        if (StringUtils.isNotBlank(begin) && StringUtils.isNotBlank(end)) {
+            if (!begin.equals(end)) {
+                List<JSONObject> list = feedbackMapper.toolConsumptionCompareGroupScheme(q);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
+            } else {
+                List<JSONObject> list = feedbackMapper.toolConsumption(q);
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
             }
-            return list;
-        }else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(date)){
-            List<JSONObject> list =  feedbackMapper.toolConsumption(q);
-            if (list == null){
-                list = new ArrayList<>();
-            }
-            return list;
         }
         return new ArrayList<>();
     }
 
     @Override
-    public Map<String,List<JSONObject>> makeAmount(String begin, String end, String group) {
+    public Map<String, List<JSONObject>> makeAmount(String begin, String end, String group) {
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setGroup(group);
-        Map<String,List<JSONObject>> map = new HashMap<>();
+        Map<String, List<JSONObject>> map = new HashMap<>();
         List<JSONObject> makeAmount = feedbackMapper.makeAmount(q);
-        if(makeAmount == null){
+        if (makeAmount == null) {
             makeAmount = new ArrayList<>();
         }
         List<JSONObject> makeAmountTrend = feedbackMapper.makeAmountTrend(q);
-        if(makeAmountTrend == null){
+        if (makeAmountTrend == null) {
             makeAmountTrend = new ArrayList<>();
         }
-        map.put("makeAmount",makeAmount);
-        map.put("makeAmountTrend",makeAmountTrend);
+        map.put("makeAmount", makeAmount);
+        map.put("makeAmountTrend", makeAmountTrend);
 
         return map;
     }
 
     @Override
-    public List<JSONObject> makeAmountTrendByProduct(String begin, String end, String group,String product_id) {
+    public List<JSONObject> makeAmountTrendByProduct(String begin, String end, String group, String product_id) {
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setProduct_id(product_id);
         q.setGroup(group);
-        List<JSONObject> list =  feedbackMapper.makeAmountTrendByProduct(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.makeAmountTrendByProduct(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
     }
 
     @Override
-    public Map<String,Object> toolConsumptionByProduct(String begin, String end, String group, String product_id) {
+    public Map<String, Object> toolConsumptionByProduct(String begin, String end, String group, String product_id) {
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setProduct_id(product_id);
         q.setGroup(group);
         List<JSONObject> list = feedbackMapper.toolConsumptionByProduct(q);
-        List<JSONObject> old_list = new ArrayList<>();
-        old_list.addAll(list);
-        List<JSONObject> new_list = new ArrayList<>();
+//        List<JSONObject> old_list = new ArrayList<>();
+//        old_list.addAll(list);
+//        List<JSONObject> new_list = new ArrayList<>();
         Set<String> schemes = new HashSet<>();
         for (JSONObject json : list) {
             String scheme = json.getString("technics_name");
-            if(StringUtils.isNotBlank(scheme)){
-            schemes.add(scheme);
+            if (StringUtils.isNotBlank(scheme)) {
+                schemes.add(scheme);
             }
         }
-        while (!list.isEmpty()){
-            for (String scheme : schemes) {
-                JSONObject o = new JSONObject();
-                Iterator iterator = list.iterator();
-                while (iterator.hasNext()) {
-                    JSONObject json = (JSONObject) iterator.next();
-                    if (scheme.equals(json.getString("technics_name"))){
-                        o.put("date",json.getString("date"));
-                        o.put(scheme+"_amount",json.getString("amount"));
-                        o.put(scheme+"_tool_cost",json.getString("tool_cost"));
-                        o.put("technics_name",json.getString(scheme));
-                        new_list.add(o);
-                        iterator.remove();
-                    }else{
-                        break;
-                    }
-                }
-            }
-        }
+//        while (!list.isEmpty()){
+//            for (String scheme : schemes) {
+//                JSONObject o = new JSONObject();
+//                Iterator iterator = list.iterator();
+//                while (iterator.hasNext()) {
+//                    JSONObject json = (JSONObject) iterator.next();
+//                    if (scheme.equals(json.getString("technics_name"))){
+//                        o.put("date",json.getString("date"));
+//                        o.put(scheme+"_amount",json.getString("amount"));
+//                        o.put(scheme+"_tool_cost",json.getString("tool_cost"));
+//                        o.put("technics_name",json.getString(scheme));
+//                        new_list.add(o);
+//                        iterator.remove();
+//                    }else{
+//                        break;
+//                    }
+//                }
+//            }
+//        }
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("technics_list",schemes);
-        map.put("compare_list",new_list);
-        map.put("list",old_list);
+        Map<String, Object> map = new HashMap<>();
+        map.put("technics_list", schemes);
+//        map.put("compare_list",new_list);
+        map.put("list", list);
         return map;
     }
 
@@ -251,8 +254,8 @@ public class ReportServiceImpl implements ReportService {
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setGroup(group);
-        List<JSONObject> list =  feedbackMapper.toolConsumptionTrend(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.toolConsumptionTrend(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;
@@ -264,12 +267,12 @@ public class ReportServiceImpl implements ReportService {
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setProduct_id(product_id);
-        if (StringUtils.isNotBlank(scheme_ids)){
+        if (StringUtils.isNotBlank(scheme_ids)) {
             String[] ids = scheme_ids.split(",");
             q.setScheme_ids(ids);
         }
-        List<JSONObject> list =  feedbackMapper.productSchemeCompare(q);
-        if (list == null){
+        List<JSONObject> list = feedbackMapper.productSchemeCompare(q);
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;

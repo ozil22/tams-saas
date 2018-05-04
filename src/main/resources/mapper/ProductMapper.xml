@@ -114,7 +114,7 @@
         where id = #{id}
     </update>
 
-    <select id="findAll">
+    <select id="findAll" resultType="com.pactera.tams.module.product.model.Product">
         select * from tams_product
     </select>
 </mapper>

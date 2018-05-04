@@ -13,10 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -367,8 +364,8 @@ public class ProductTechnicsSchemeController {
 	 * 获取全部工艺
 	 */
 	@ApiOperation(value = "获取全部工艺",notes="获取全部工艺")
-	@RequestMapping("/getAll")
-	public List<ProductTechnicsScheme> getAll(@RequestBody Map map) {
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET)
+	public List<ProductTechnicsScheme> getAll() {
 		return objectService.getAll();
 	}
 }

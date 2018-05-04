@@ -84,9 +84,10 @@
 				left join tams_product_technics_scheme t on b.technics_code = t.id
 				left join tams_product_technics_scheme_work_step s on b.work_step = s.id
 				left join tams_product p on t.product_id = p.id
+				left join tams_tool l on l.tool_name = s.tool_name
 				<where>
 					<if test="tool_id != null and tool_id != ''">
-						and s.tool_no = #{tool_id}
+						and l.id = #{tool_id}
 					</if>
 					<if test="begin_date != null and begin_date != ''">
 						and  b.create_date >= #{begin_date}
@@ -118,9 +119,10 @@
 		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
 		left join tams_product p on t.product_id = p.id
 		left join tams_material m on p.material_quality = m.material_quality_name
+		left join tams_tool l on l.tool_name = s.tool_name
 		<where>
 			<if test="tool_id != null and tool_id != ''">
-				and s.tool_no = #{tool_id}
+				and l.id = #{tool_id}
 			</if>
 			<if test="begin_date != null and begin_date != ''">
 				and  b.create_date >= #{begin_date}
@@ -144,11 +146,11 @@
 		left join tams_product_technics_scheme t on b.technics_code = t.id
 		left join tams_product p on t.product_id = p.id
 		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool l on s.tool_name = l.tool_name
 		left join tams_tool_price e on e.tool_id = l.id
 		<where>
 			<if test="tool_id != null and tool_id != ''">
-				and s.tool_no = #{tool_id}
+				and l.id = #{tool_id}
 			</if>
 			<if test="product_id != null and product_id != ''">
 				and p.id = #{product_id}
@@ -187,11 +189,11 @@
 		left join tams_product_technics_scheme t on b.technics_code = t.id
 		left join tams_product p on t.product_id = p.id
 		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool l on s.tool_name = l.tool_name
 		left join tams_tool_price e on e.tool_id = l.id
 		<where>
 			<if test="tool_id != null and tool_id != ''">
-				and s.tool_no = #{tool_id}
+				and l.id = #{tool_id}
 			</if>
 			<if test="product_id != null and product_id != ''">
 				and p.id = #{product_id}
@@ -217,10 +219,10 @@
 
 	<select id="toolConsumptionCompare" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
 						 resultType="com.alibaba.fastjson.JSONObject">
-	select a.tool_label,a.amount,b.amount,c.amount,
-		concat((a.amount-b.amount)/b.amount*100,'%') yoy,
-		concat((a.amount-c.amount)/c.amount*100,'%') qoq,
-		a.tool_cost,b.tool_cost,c.tool_cost,
+	select a.tool_label,a.amount amount1,b.amount amount2,c.amount amount3,
+		concat((a.amount-b.amount)/b.amount*100,'%') amount_yoy,
+		concat((a.amount-c.amount)/c.amount*100,'%') amount_qoq,
+		a.tool_cost cost1,b.tool_cost cost2,c.tool_cost cost3,
 		concat((a.tool_cost-b.tool_cost)/b.tool_cost*100,'%') cost_yoy,
 		concat((a.tool_cost-c.tool_cost)/c.tool_cost*100,'%') cost_qoq
 	from
@@ -230,7 +232,7 @@
 	left join tams_product_technics_scheme t on b.TECHNICS_CODE = t.CODE
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="tool_label != null and tool_label != ''">
@@ -273,7 +275,7 @@
 	left join tams_product_technics_scheme t on b.technics_code = t.code
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="tool_label != null and tool_label != ''">
@@ -317,7 +319,7 @@
 	left join tams_product_technics_scheme t on b.technics_code = t.code
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="tool_label != null and tool_label != ''">
@@ -359,20 +361,20 @@
 
 <select id="toolConsumptionCompareGroupScheme" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
 		resultType="com.alibaba.fastjson.JSONObject">
-	select a.product_label,a.scheme_code,a.amount,b.amount,c.amount,
-	concat((a.amount-b.amount)/b.amount*100,'%') yoy,
-	concat((a.amount-c.amount)/c.amount*100,'%') qoq,
-	a.tool_cost,b.tool_cost,c.tool_cost,
+	select a.product_label,a.code,a.amount amount1,b.amount amount2,c.amount amount3,
+	concat((a.amount-b.amount)/b.amount*100,'%') amount_yoy,
+	concat((a.amount-c.amount)/c.amount*100,'%') amount_qoq,
+	a.tool_cost cost1,b.tool_cost cost2,c.tool_cost cost3,
 	concat((a.tool_cost-b.tool_cost)/b.tool_cost*100,'%') cost_yoy,
 	concat((a.tool_cost-c.tool_cost)/c.tool_cost*100,'%') cost_qoq
 	from
-	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	(select p.product_label,t.code,sum(s.amount) amount,
 	sum(s.amount*e.tool_price) tool_cost
 	from tams_user_feed_back b
 	left join tams_product_technics_scheme t on b.TECHNICS_CODE = t.CODE
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="date != null and date != ''">
@@ -400,13 +402,13 @@
 	</where>
 	group by t.id)a
 	LEFT JOIN
-	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	(select p.product_label,t.code,sum(s.amount) amount,
 	sum(s.amount*e.tool_price) tool_cost
 	from tams_user_feed_back b
 	left join tams_product_technics_scheme t on b.technics_code = t.code
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="date != null and date != ''">
@@ -433,15 +435,15 @@
 		</if>
 	</where>
 	group by t.id)b
-	on a.scheme_code = b.scheme_code
+	on a.code = b.code
 	left join
-	(select p.product_label,t.scheme_code,sum(s.amount) amount,
+	(select p.product_label,t.code,sum(s.amount) amount,
 	sum(s.amount*e.tool_price) tool_cost
 	from tams_user_feed_back b
 	left join tams_product_technics_scheme t on b.technics_code = t.code
 	left join tams_product p on t.product_id = p.id
 	left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-	left join tams_tool l on s.tool_no = l.id
+	left join tams_tool l on s.tool_name = l.tool_name
 	left join tams_tool_price e on e.tool_id = l.id
 	<where>
 		<if test="date != null and date != ''">
@@ -468,19 +470,19 @@
 		</if>
 	</where>
 	group by t.id)c
-	on a.scheme_code = c.scheme_code
+	on a.code = c.code
 	order by a.amount desc
 </select>
 
 	<select id="toolConsumption" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
 			resultType="com.alibaba.fastjson.JSONObject">
-		select l.tool_label,p.product_label,t.scheme_code,sum(s.amount) amount,
+		select l.tool_label,p.product_label,t.code,sum(s.amount) amount,
 		sum(s.amount*e.tool_price) tool_cost
 		from tams_user_feed_back b
 		left join tams_product_technics_scheme t on b.technics_code = t.code
 		left join tams_product p on t.product_id = p.id
 		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-		left join tams_tool l on s.tool_no = l.id
+		left join tams_tool l on s.tool_name = l.tool_name
 		left join tams_tool_price e on e.tool_id = l.id
 		<where>
 			<if test="tool_label != null and tool_label != ''">
@@ -631,7 +633,7 @@
         left join tams_product_technics_scheme t on b.technics_code = t.code
         left join tams_product p on t.product_id = p.id
         left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-        left join tams_tool l on s.tool_no = l.id
+        left join tams_tool l on s.tool_name = l.tool_name
         left join tams_tool_price e on e.tool_id = l.id
         <where>
             <if test="begin_date != null and begin_date != ''">
@@ -659,7 +661,7 @@
         <if test="group =='day' ">
             group by date_format(b.create_date,'%Y-%m-%d')
         </if>
-        order by date
+        order by date,t.id
     </select>
 
     <select id="toolConsumptionTrend" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
@@ -682,7 +684,7 @@
         </if>
         from tams_user_feed_back b
         left join tams_product_technics_scheme_work_step s on b.work_step = s.id
-        left join tams_tool l on s.tool_no = l.id
+        left join tams_tool l on s.tool_name = l.tool_name
         left join tams_tool_price e on e.tool_id = l.id
         <where>
             <if test="begin_date != null and begin_date != ''">
@@ -728,7 +730,7 @@
 		left join tams_product p on t.product_id = p.id
 		left join tams_product_technics_scheme_work_step s on b.work_step = s.id
 		left join tams_product_technics_scheme_process o on s.scheme_id = o.id
-		left join tams_tool l on s.tool_no = l.video_id
+		left join tams_tool l on s.tool_name = l.tool_name
 		left join tams_tool_price e on e.tool_id = l.id
 		<where>
 			<if test="product_id != null and product_id != ''">

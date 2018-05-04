@@ -49,6 +49,9 @@ public class CheckTokenFilter2  implements Filter {
 		NOT_FILTER_URLS_CONTAINS.put("upload", "上传");
 		NOT_FILTER_URLS_CONTAINS.put("/solr/", "solr");
 		NOT_FILTER_URLS_CONTAINS.put("/report/", "report");
+		NOT_FILTER_URLS_CONTAINS.put("/product/", "product");
+		NOT_FILTER_URLS_CONTAINS.put("/tool/", "tool");
+		NOT_FILTER_URLS_CONTAINS.put("/productTechnicsScheme/", "productTechnicsScheme");
 	}
 	
 	@Override

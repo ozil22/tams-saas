@@ -100,9 +100,8 @@ public class ReportController {
     @RequestMapping(value = "/toolConsumption", method = RequestMethod.GET)
     public RestResult toolConsumption(@RequestParam(required = false) String tool_label, @RequestParam(required = false) String begin,
                                       @RequestParam(required = false) String end,@RequestParam(required = false) String product_id,
-                                      @RequestParam(required = false) String scheme_id,@RequestParam(required = false) String group,
-                                      @RequestParam(required = false) String date) {
-        return ResultUtils.genSuccesResult(reportService.toolConsumption(tool_label, begin, end,product_id,scheme_id,group,date));
+                                      @RequestParam(required = false) String scheme_id,@RequestParam(required = false) String group) {
+        return ResultUtils.genSuccesResult(reportService.toolConsumption(tool_label, begin, end,product_id,scheme_id,group));
     }
 
 
@@ -123,9 +122,8 @@ public class ReportController {
     @ApiOperation(value = "5工艺刀具消耗排名", notes = "5工艺刀具消耗排名")
     @RequestMapping(value = "/toolConsumptionScheme", method = RequestMethod.GET)
     public RestResult toolConsumptionScheme(@RequestParam(required = false) String begin,@RequestParam(required = false) String end,
-                                            @RequestParam(required = false) String scheme_id,@RequestParam(required = false) String group,
-                                            @RequestParam(required = false) String date) {
-        return ResultUtils.genSuccesResult(reportService.toolConsumptionScheme(begin, end,scheme_id,group,date));
+                                            @RequestParam(required = false) String scheme_id,@RequestParam(required = false) String group) {
+        return ResultUtils.genSuccesResult(reportService.toolConsumptionScheme(begin, end,scheme_id,group));
     }
 
     /**

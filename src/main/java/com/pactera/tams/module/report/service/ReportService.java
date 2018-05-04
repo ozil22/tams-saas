@@ -16,9 +16,9 @@ public interface ReportService {
 
     List<JSONObject> schemeRecommend(String tool_id, String begin, String end, String material_names, String product_id, String process_dates);
 
-    List<JSONObject> toolConsumption(String tool_label, String begin, String end, String product_id, String scheme_id,String group,String date);
+    List<JSONObject> toolConsumption(String tool_label, String begin, String end, String product_id, String scheme_id,String group);
 
-    List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group, String date);
+    List<JSONObject> toolConsumptionScheme(String begin, String end, String scheme_id, String group);
 
     Map<String,List<JSONObject>> makeAmount(String begin, String end, String group);
 
