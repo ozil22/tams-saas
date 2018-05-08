@@ -1,27 +1,21 @@
 package com.pactera.tams.module.machine.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.pactera.tams.module.machine.entity.Material;
-import com.pactera.tams.module.machine.service.MaterialService;
 import com.pactera.tams.common.utils.DateUtils;
 import com.pactera.tams.common.utils.IdGenerator;
 import com.pactera.tams.common.utils.MapToObjectFactory;
 import com.pactera.tams.common.utils.StringFormatUtils;
-
+import com.pactera.tams.module.machine.entity.Material;
+import com.pactera.tams.module.machine.service.MaterialService;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 /**
  * 材质
  * @author ljp
@@ -176,5 +170,14 @@ public class MaterialController {
 			return result;
 		}
 		return result;
+	}
+
+	/**
+	 * 查询
+	 */
+	@ApiOperation(value = "获取全部材质",notes="获取全部材质")
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET)
+	public List<Material> getAll() {
+		return objectService.getAll();
 	}
 }

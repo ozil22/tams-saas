@@ -54,6 +54,7 @@ public class CheckTokenFilter  implements Filter {
 		NOT_FILTER_URLS_CONTAINS.put("/product/", "product");
 		NOT_FILTER_URLS_CONTAINS.put("/tool/", "tool");
 		NOT_FILTER_URLS_CONTAINS.put("/productTechnicsScheme/", "productTechnicsScheme");
+		NOT_FILTER_URLS_CONTAINS.put("/material/", "material");
 	}
 	
 	@Override

@@ -128,4 +128,8 @@ public class MaterialService {
 	public Material getByBean(Material bean) {
 		return objectMapper.selectOne(bean);
 	}
+
+    public List<Material> getAll() {
+		return objectMapper.selectAll();
+    }
 }
