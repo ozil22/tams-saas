@@ -596,20 +596,21 @@
             </if>
         </where>
         <if test="group =='year' ">
-            group by date_format(b.create_date,'%Y')
+            group by date_format(b.create_date,'%Y'),t.id
         </if>
         <if test="group =='quarter' ">
-            group by   concat(year(b.create_date),'年',quarter(b.create_date),'季度')
+            group by   concat(year(b.create_date),'年',quarter(b.create_date),'季度'),t.id
         </if>
         <if test="group =='month' ">
-            group by  date_format(b.create_date,'%Y-%m')
+            group by  date_format(b.create_date,'%Y-%m'),t.id
         </if>
         <if test="group =='week' ">
-            group by concat(year(b.create_date),'年',week(b.create_date),'周')
+            group by concat(year(b.create_date),'年',week(b.create_date),'周'),t.id
         </if>
         <if test="group =='day' ">
-            group by date_format(b.create_date,'%Y-%m-%d')
+            group by date_format(b.create_date,'%Y-%m-%d'),t.id
         </if>
+		order by b.create_date
     </select>
     <select id="toolConsumptionByProduct" parameterType="com.pactera.tams.module.report.vo.ReportQuery"
             resultType="com.alibaba.fastjson.JSONObject">

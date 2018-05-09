@@ -190,17 +190,71 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<JSONObject> makeAmountTrendByProduct(String begin, String end, String group, String product_id) {
+    public Map<String, Object> makeAmountTrendByProduct(String begin, String end, String group, String product_id) {
+        Map<String, Object> map = new HashMap<>();
+
         ReportQuery q = new ReportQuery();
         q.setBegin_date(begin);
         q.setEnd_date(end);
         q.setProduct_id(product_id);
         q.setGroup(group);
         List<JSONObject> list = feedbackMapper.makeAmountTrendByProduct(q);
+
         if (list == null) {
-            list = new ArrayList<>();
+            map.put("list", new ArrayList<>());
+            map.put("compare_list", new ArrayList<>());
+            map.put("technics_list", new ArrayList<>());
+        } else {
+            List<JSONObject> new_list = new ArrayList<>();
+            List<String> technics_list = new ArrayList<String>();
+            String d = null;
+            JSONObject json = new JSONObject();
+            int i = 1;
+            for (JSONObject jsonObject : list) {
+                String date = jsonObject.getString("date");
+                String technics_code = jsonObject.getString("technics_code");
+                String waste_amount = jsonObject.getString("waste_amount");
+                String make_amount = jsonObject.getString("make_amount");
+                String qualified_amount = jsonObject.getString("qualified_amount");
+                if (!technics_list.contains(technics_code)) {
+                    technics_list.add(technics_code);
+                }
+
+                if (d == null) {
+                    json.put("date", jsonObject.get("date"));
+                    json.put("technics_code_" + i, technics_code);
+                    json.put("waste_amount_" + i, waste_amount);
+                    json.put("make_amount_" + i, make_amount);
+                    json.put("qualified_amount_" + i, qualified_amount);
+                    i += 1;
+                    d = date;
+                } else if (d.equals(date)) {
+                    json.put("date", jsonObject.get("date"));
+                    json.put("technics_code_" + i, technics_code);
+                    json.put("waste_amount_" + i, waste_amount);
+                    json.put("make_amount_" + i, make_amount);
+                    json.put("qualified_amount_" + i, qualified_amount);
+                    i += 1;
+                } else {
+                    new_list.add(json);
+                    i = 1;
+                    json = new JSONObject();
+                    json.put("date", jsonObject.get("date"));
+                    json.put("technics_code_" + i, technics_code);
+                    json.put("waste_amount_" + i, waste_amount);
+                    json.put("make_amount_" + i, make_amount);
+                    json.put("qualified_amount_" + i, qualified_amount);
+                    d = date;
+                    i += 1;
+                }
+            }
+            new_list.add(json);
+            map.put("list", list);
+            map.put("compare_list", new_list);
+            map.put("technics_list", technics_list);
+
         }
-        return list;
+        return map;
     }
 
     @Override

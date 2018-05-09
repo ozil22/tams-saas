@@ -22,7 +22,7 @@ public interface ReportService {
 
     Map<String,List<JSONObject>> makeAmount(String begin, String end, String group);
 
-    List<JSONObject> makeAmountTrendByProduct(String begin, String end, String group,String product_id);
+    Map<String, Object> makeAmountTrendByProduct(String begin, String end, String group,String product_id);
 
     Map<String,Object> toolConsumptionByProduct(String begin, String end, String group, String product_id);
 
